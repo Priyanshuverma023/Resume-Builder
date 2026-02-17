@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional ATS-friendly resume builder with industry-standard templates">
+    <title>Resume Builder - ATS Optimized</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="rb-container">
+        <header class="rb-header">
+            <div class="rb-header-content">
+                <h1 class="rb-title">Resume Builder</h1>
+                <p class="rb-subtitle">Create ATS-optimized resumes with industry-standard formatting</p>
+            </div>
+        </header>
+
+        <main class="rb-main">
+            <div class="rb-controls">
+                <div class="rb-template-selector">
+                    <label for="template-select" class="rb-label">Template</label>
+                    <select id="template-select" class="rb-select">
+                        <option value="professional">Professional</option>
+                        <option value="modern">Modern</option>
+                        <option value="classic">Classic</option>
+                    </select>
+                </div>
+                <button id="download-pdf" class="rb-btn rb-btn-primary">
+                    <img src="assests/svg/download.svg" alt="Download" class="rb-icon">
+                    Download PDF
+                </button>
+            </div>
+
+            <div class="rb-content">
+                <aside class="rb-sidebar">
+                    <nav class="rb-nav">
+                        <button class="rb-nav-item active" data-section="personal">
+                            <img src="assests/svg/user.svg" alt="Personal Info" class="rb-icon">
+                            Personal Info
+                        </button>
+                        <button class="rb-nav-item" data-section="summary">
+                            <img src="assests/svg/document.svg" alt="Summary" class="rb-icon">
+                            Summary
+                        </button>
+                        <button class="rb-nav-item" data-section="experience">
+                            <img src="assests/svg/briefcase.svg" alt="Experience" class="rb-icon">
+                            Experience
+                        </button>
+                        <button class="rb-nav-item" data-section="education">
+                            <img src="assests/svg/education.svg" alt="Education" class="rb-icon">
+                            Education
+                        </button>
+                        <button class="rb-nav-item" data-section="skills">
+                            <img src="assests/svg/tools.svg" alt="Skills" class="rb-icon">
+                            Skills
+                        </button>
+                        <button class="rb-nav-item" data-section="certifications">
+                            <img src="assests/svg/tick.svg" alt="Certifications" class="rb-icon">
+                            Certifications
+                        </button>
+                    </nav>
+                </aside>
+
+                <section class="rb-editor">
+                    <div class="rb-section active" data-section="personal">
+                        <h2 class="rb-section-title">Personal Information</h2>
+                        <div class="rb-form">
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <label for="full-name" class="rb-label">Full Name</label>
+                                    <input type="text" id="full-name" class="rb-input" placeholder="John Doe" required>
+                                </div>
+                                <div class="rb-form-group">
+                                    <label for="job-title" class="rb-label">Job Title</label>
+                                    <input type="text" id="job-title" class="rb-input" placeholder="Senior Software Engineer">
+                                </div>
+                            </div>
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <label for="email" class="rb-label">Email</label>
+                                    <input type="email" id="email" class="rb-input" placeholder="john.doe@example.com">
+                                </div>
+                                <div class="rb-form-group">
+                                    <label for="phone" class="rb-label">Phone</label>
+                                    <input type="tel" id="phone" class="rb-input" placeholder="+1 (555) 123-4567">
+                                </div>
+                            </div>
+                            <div class="rb-form-row">
+                                <div class="rb-form-group">
+                                    <label for="location" class="rb-label">Location</label>
+                                    <input type="text" id="location" class="rb-input" placeholder="San Francisco, CA">
+                                </div>
+                                <div class="rb-form-group">
+                                    <label for="linkedin" class="rb-label">LinkedIn</label>
+                                    <input type="url" id="linkedin" class="rb-input" placeholder="linkedin.com/in/johndoe">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rb-section" data-section="summary">
+                        <h2 class="rb-section-title">Professional Summary</h2>
+                        <div class="rb-form">
+                            <div class="rb-form-group">
+                                <label for="summary-text" class="rb-label">Summary</label>
+                                <textarea id="summary-text" class="rb-textarea" rows="6" placeholder="Results-driven professional with 5+ years of experience in..."></textarea>
+                                <span class="rb-helper">Keep it concise and impactful. 3-5 sentences recommended.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rb-section" data-section="experience">
+                        <div class="rb-section-header">
+                            <h2 class="rb-section-title">Work Experience</h2>
+                            <button id="add-experience" class="rb-btn rb-btn-secondary">
+                                <img src="assests/svg/add.svg" alt="Add" class="rb-icon">
+                                Add Experience
+                            </button>
+                        </div>
+                        <div id="experience-list" class="rb-list"></div>
+                    </div>
+
+                    <div class="rb-section" data-section="education">
+                        <div class="rb-section-header">
+                            <h2 class="rb-section-title">Education</h2>
+                            <button id="add-education" class="rb-btn rb-btn-secondary">
+                                <img src="assests/svg/add.svg" alt="Add" class="rb-icon">
+                                Add Education
+                            </button>
+                        </div>
+                        <div id="education-list" class="rb-list"></div>
+                    </div>
+
+                    <div class="rb-section" data-section="skills">
+                        <div class="rb-section-header">
+                            <h2 class="rb-section-title">Skills</h2>
+                            <button id="add-skill" class="rb-btn rb-btn-secondary">
+                                <img src="assests/svg/add.svg" alt="Add" class="rb-icon">
+                                Add Skill
+                            </button>
+                        </div>
+                        <div id="skills-list" class="rb-skills-grid"></div>
+                    </div>
+
+                    <div class="rb-section" data-section="certifications">
+                        <div class="rb-section-header">
+                            <h2 class="rb-section-title">Certifications</h2>
+                            <button id="add-certification" class="rb-btn rb-btn-secondary">
+                                <img src="assests/svg/add.svg" alt="Add" class="rb-icon">
+                                Add Certification
+                            </button>
+                        </div>
+                        <div id="certifications-list" class="rb-list"></div>
+                    </div>
+                </section>
+
+                <aside class="rb-preview">
+                    <div class="rb-preview-header">
+                        <h3 class="rb-preview-title">Preview</h3>
+                    </div>
+                    <div class="rb-preview-content" id="resume-preview">
+                        <div class="rb-resume" id="resume-output"></div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast-container" class="rb-toast-container"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>
