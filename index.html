@@ -38,19 +38,12 @@
             <div class="template-group">
                 <label for="template-select">Template</label>
                 <select id="template-select" class="template-select">
-                    <option value="ats-tech">Software Engineering</option>
-                    <option value="ats-data-science">Data Science / AI / ML</option>
-                    <option value="ats-devops">DevOps / Cloud Engineer</option>
-                    <option value="ats-product">Product Manager</option>
-                    <option value="ats-uiux">UI/UX Designer</option>
-                    <option value="ats-business">Business / Finance</option>
-                    <option value="ats-healthcare">Healthcare / Medical</option>
-                    <option value="ats-engineering">Engineering (Mech/Civil)</option>
-                    <option value="ats-marketing">Digital Marketing</option>
-                    <option value="ats-education">Education / Teaching</option>
-                    <option value="ats-sales">Sales / Account Mgmt</option>
-                    <option value="ats-hr">Human Resources</option>
-                    <option value="ats-legal">Legal / Compliance</option>
+                    <option value="modern-professional">Modern Professional</option>
+                    <option value="simple-clean">Simple Clean</option>
+                    <option value="executive-professional">Executive Professional</option>
+                    <option value="entry-level">Entry Level</option>
+                    <option value="technical-it">Technical / IT</option>
+                    <option value="creative-professional">Creative Professional</option>
                 </select>
             </div>
         </div>
@@ -350,7 +343,6 @@
 
                 if (!navTabs) return;
 
-                // Smooth scroll function with easing
                 function smoothScroll(element, target, duration) {
                     const start = element.scrollLeft;
                     const change = target - start;
@@ -364,43 +356,26 @@
                         const elapsed = currentTime - startTime;
                         const progress = Math.min(elapsed / duration, 1);
                         const eased = easeInOutQuad(progress);
-
                         element.scrollLeft = start + (change * eased);
-
-                        if (progress < 1) {
-                            requestAnimationFrame(animateScroll);
-                        }
+                        if (progress < 1) requestAnimationFrame(animateScroll);
                     }
-
                     requestAnimationFrame(animateScroll);
                 }
 
-                // Scroll left button
                 if (scrollLeft) {
                     scrollLeft.addEventListener('click', () => {
-                        const scrollAmount = navTabs.clientWidth * 0.7;
-                        smoothScroll(navTabs, navTabs.scrollLeft - scrollAmount, 300);
+                        smoothScroll(navTabs, navTabs.scrollLeft - navTabs.clientWidth * 0.7, 300);
                     });
                 }
-
-                // Scroll right button
                 if (scrollRight) {
                     scrollRight.addEventListener('click', () => {
-                        const scrollAmount = navTabs.clientWidth * 0.7;
-                        smoothScroll(navTabs, navTabs.scrollLeft + scrollAmount, 300);
+                        smoothScroll(navTabs, navTabs.scrollLeft + navTabs.clientWidth * 0.7, 300);
                     });
                 }
 
-                // Check if tabs overflow and show indicators
                 function checkOverflow() {
                     const hasOverflow = navTabs.scrollWidth > navTabs.clientWidth;
-                    if (hasOverflow) {
-                        navWrapper.classList.add('has-scroll');
-                    } else {
-                        navWrapper.classList.remove('has-scroll');
-                    }
-
-                    // Update indicator visibility based on scroll position
+                    navWrapper.classList.toggle('has-scroll', hasOverflow);
                     if (scrollLeft && scrollRight) {
                         scrollLeft.style.display = navTabs.scrollLeft > 10 ? 'flex' : 'none';
                         scrollRight.style.display =
@@ -408,82 +383,34 @@
                     }
                 }
 
-                // Mouse wheel horizontal scroll
                 navTabs.addEventListener('wheel', (e) => {
-                    if (e.deltaY !== 0) {
-                        e.preventDefault();
-                        navTabs.scrollLeft += e.deltaY;
-                    }
+                    if (e.deltaY !== 0) { e.preventDefault(); navTabs.scrollLeft += e.deltaY; }
                 }, { passive: false });
 
-                // Touch swipe for mobile
-                let touchStartX = 0;
-                let scrollStartX = 0;
-
+                let touchStartX = 0, scrollStartX = 0;
                 navTabs.addEventListener('touchstart', (e) => {
                     touchStartX = e.touches[0].clientX;
                     scrollStartX = navTabs.scrollLeft;
                 }, { passive: true });
-
                 navTabs.addEventListener('touchmove', (e) => {
-                    const touchX = e.touches[0].clientX;
-                    const diff = touchStartX - touchX;
-                    navTabs.scrollLeft = scrollStartX + diff;
+                    navTabs.scrollLeft = scrollStartX + (touchStartX - e.touches[0].clientX);
                 }, { passive: true });
 
-                // Update on scroll
                 navTabs.addEventListener('scroll', checkOverflow);
-
-                // Update on resize
                 window.addEventListener('resize', checkOverflow);
-
-                // Initial check
                 checkOverflow();
-                setTimeout(checkOverflow, 100); // Double check after render
+                setTimeout(checkOverflow, 100);
             })();
-
-            // ===== MOBILE PREVIEW TOGGLE =====
-            const togglePreviewMobile = document.getElementById('toggle-preview-mobile');
-            const closePreviewMobile = document.getElementById('close-preview-mobile');
-            const previewPanel = document.getElementById('preview-panel');
-
-            if (togglePreviewMobile) {
-                togglePreviewMobile.addEventListener('click', () => {
-                    previewPanel.classList.add('open');
-                    if (closePreviewMobile) closePreviewMobile.style.display = 'block';
-                });
-            }
-
-            if (closePreviewMobile) {
-                closePreviewMobile.addEventListener('click', () => {
-                    previewPanel.classList.remove('open');
-                });
-            }
-
-            // Close preview when clicking outside on mobile
-            if (window.innerWidth <= 768 && previewPanel) {
-                previewPanel.addEventListener('click', (e) => {
-                    if (e.target === previewPanel) {
-                        previewPanel.classList.remove('open');
-                    }
-                });
-            }
 
             // ===== NAVIGATION TABS SWITCHING =====
             document.querySelectorAll('.nav-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     const section = tab.dataset.section;
-
-                    // Update active tab
                     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-
-                    // Update active section
                     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                     const targetSection = document.querySelector(`.section[data-section="${section}"]`);
                     if (targetSection) targetSection.classList.add('active');
-
-                    // Scroll active tab into view
                     tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 });
             });

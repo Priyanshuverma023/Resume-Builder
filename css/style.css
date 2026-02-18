@@ -1785,10 +1785,14 @@ textarea {
 .rb-resume-entry-date {
     font-size: 8.5pt;
     color: #555;
-    white-space: nowrap;
-    flex-shrink: 0;
+    white-space: normal;      /* allow wrapping */
+    flex-shrink: 1;           /* allow shrinking */
+    min-width: 0;             /* allow flex shrink */
+    overflow-wrap: anywhere;  /* break long spam words */
+    word-break: break-word;
     font-weight: 500;
 }
+
 
 .rb-resume-entry-location {
     font-size: 8.5pt;
@@ -2468,173 +2472,630 @@ textarea {
 /* ==========================================
    TEMPLATE 13: LEGAL / COMPLIANCE (ats-legal)
    Deep charcoal, formal, bar-admission style
+ 
+   /* ==========================================
+   RESUMEATS.IO TEMPLATE OVERRIDES
+   Replaces all previous ats-* templates.
+   Paste this block at the END of style.css,
+   replacing everything after the last
+   existing template block.
    ========================================== */
-[data-template="ats-legal"] .rb-resume-header {
-    border-bottom: 1px solid #374151;
-    border-top: 3px solid #111827;
+
+/* ── 1. MODERN PROFESSIONAL ──────────────────
+   Calibri, blue #3498db accent, centered header
+   ─────────────────────────────────────────── */
+[data-template="modern-professional"] {
+    font-family: Calibri, Arial, sans-serif;
+    color: #333;
+}
+[data-template="modern-professional"] .rb-resume-header {
     text-align: center;
-    padding: 12px 0;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 14px;
     margin-bottom: 18px;
 }
-
-[data-template="ats-legal"] .rb-resume-name {
-    color: #111827;
-    font-family: 'Merriweather', Georgia, serif;
-    font-size: 20pt;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+[data-template="modern-professional"] .rb-resume-name {
+    font-size: 24pt;
+    color: #2c3e50;
+    font-weight: bold;
+    letter-spacing: 0;
 }
-
-[data-template="ats-legal"] .rb-resume-title {
-    color: #374151;
+[data-template="modern-professional"] .rb-resume-title {
+    color: #666;
     font-weight: 400;
-    font-style: italic;
-    font-family: 'Merriweather', Georgia, serif;
+    font-size: 11pt;
 }
-
-[data-template="ats-legal"] .rb-resume-section-title {
-    color: #111827;
-    border-bottom: 1px solid #374151;
-    font-family: 'Merriweather', Georgia, serif;
-    font-weight: 700;
-    text-transform: none;
-    font-size: 10.5pt;
-    letter-spacing: 0.3px;
+[data-template="modern-professional"] .rb-resume-contact {
+    font-size: 10pt;
+    color: #444;
+    text-align: center;
 }
-
-[data-template="ats-legal"] .rb-resume-entry-title {
-    color: #111827;
-    font-family: 'Merriweather', Georgia, serif;
+[data-template="modern-professional"] .rb-resume-section-title {
+    font-size: 14pt;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 4pt;
+    margin-bottom: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    background: none;
+    border-left: none;
+    padding-left: 0;
 }
-
-[data-template="ats-legal"] .rb-resume-entry-subtitle {
-    color: #374151;
+[data-template="modern-professional"] .rb-resume-entry-title {
+    font-size: 12pt;
+    font-weight: bold;
+    color: #2c3e50;
+}
+[data-template="modern-professional"] .rb-resume-entry-subtitle {
+    font-weight: bold;
     font-style: normal;
-    font-weight: 600;
+    color: #333;
 }
-
-[data-template="ats-legal"] .rb-resume-skill {
+[data-template="modern-professional"] .rb-resume-entry-date {
+    font-style: italic;
+    color: #666;
+    font-weight: 400;
+}
+[data-template="modern-professional"] .rb-resume-summary {
+    color: #333;
+    font-size: 9.5pt;
+}
+[data-template="modern-professional"] .rb-resume-list li {
+    color: #333;
+}
+/* Bullet-inline skills: inline list with • separator */
+[data-template="modern-professional"] .rb-resume-skills-list {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+[data-template="modern-professional"] .rb-resume-skill {
+    display: inline;
     background: transparent;
     border: none;
     padding: 0;
-    color: #374151;
     font-size: 9.5pt;
+    color: #333;
+    border-radius: 0;
 }
-
-[data-template="ats-legal"] .rb-resume-skills-list {
-    gap: 0;
+[data-template="modern-professional"] .rb-resume-skill::after {
+    content: " \2022  ";
 }
-
-[data-template="ats-legal"] .rb-resume-skill::after {
-    content: " · ";
-    color: #9ca3af;
-}
-
-[data-template="ats-legal"] .rb-resume-skill:last-child::after {
+[data-template="modern-professional"] .rb-resume-skill:last-child::after {
     content: "";
 }
 
-/* ── Skill input card (rb- prefixed) ── */
-.rb-skill-input-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--gray-50);
-    border: 1px solid var(--gray-200);
-    border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-    width: 100%;
-}
 
-.rb-skill-input {
-    flex: 1;
+/* ── 2. SIMPLE CLEAN ─────────────────────────
+   Arial, black/white, UPPERCASE name & sections
+   ─────────────────────────────────────────── */
+[data-template="simple-clean"] {
+    font-family: Arial, sans-serif;
+    color: #000;
 }
-
-.rb-skill-input-actions {
-    display: flex;
-    gap: 0.5rem;
+[data-template="simple-clean"] .rb-resume-header {
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 16px;
 }
-
-/* ── Skill tag (rb- prefixed, in the form panel) ── */
-.rb-skill-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.625rem;
-    background: var(--primary-light);
-    border: 1px solid var(--primary);
-    border-radius: 1rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--primary-dark);
+[data-template="simple-clean"] .rb-resume-name {
+    font-size: 22pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    color: #000;
 }
-
-.rb-skill-tag button {
+[data-template="simple-clean"] .rb-resume-title {
+    display: none; /* Simple Clean doesn't show tagline */
+}
+[data-template="simple-clean"] .rb-resume-contact {
+    font-size: 10.5pt;
+    color: #000;
+    line-height: 1.6;
+}
+[data-template="simple-clean"] .rb-resume-section-title {
+    font-size: 13pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+    color: #000;
+    border-bottom: none;
+    padding-bottom: 0;
     background: none;
+    border-left: none;
+    padding-left: 0;
+}
+[data-template="simple-clean"] .rb-resume-entry-title {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #000;
+}
+[data-template="simple-clean"] .rb-resume-entry-subtitle {
+    font-style: normal;
+    font-weight: 400;
+    color: #000;
+}
+[data-template="simple-clean"] .rb-resume-entry-date {
+    color: #000;
+    font-weight: 400;
+}
+[data-template="simple-clean"] .rb-resume-summary {
+    font-size: 11pt;
+    color: #000;
+}
+[data-template="simple-clean"] .rb-resume-list li {
+    font-size: 11pt;
+    color: #000;
+}
+[data-template="simple-clean"] .rb-resume-skills-list {
+    display: block;
+}
+[data-template="simple-clean"] .rb-resume-skill {
+    display: inline;
+    background: transparent;
     border: none;
-    padding: 1px;
+    padding: 0;
+    font-size: 11pt;
+    color: #000;
+    border-radius: 0;
+}
+[data-template="simple-clean"] .rb-resume-skill::after {
+    content: ", ";
+}
+[data-template="simple-clean"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+
+/* ── 3. EXECUTIVE PROFESSIONAL ───────────────
+   Times New Roman, centered, 1px solid black sections
+   ─────────────────────────────────────────── */
+[data-template="executive-professional"] {
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+}
+[data-template="executive-professional"] .rb-resume-header {
+    text-align: center;
+    border-bottom: 1px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+}
+[data-template="executive-professional"] .rb-resume-name {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 26pt;
+    font-weight: bold;
+    color: #000;
+    letter-spacing: 0;
+}
+[data-template="executive-professional"] .rb-resume-title {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #333;
+}
+[data-template="executive-professional"] .rb-resume-contact {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 10pt;
+    color: #000;
+    line-height: 1.6;
+}
+[data-template="executive-professional"] .rb-resume-section-title {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #000;
+    border-bottom: 1px solid #000;
+    padding-bottom: 2pt;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+    background: none;
+    border-left: none;
+    padding-left: 0;
+}
+[data-template="executive-professional"] .rb-resume-entry-title {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11.5pt;
+    font-weight: bold;
+    color: #000;
+}
+[data-template="executive-professional"] .rb-resume-entry-subtitle {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    font-weight: bold;
+    font-style: normal;
+    color: #000;
+}
+[data-template="executive-professional"] .rb-resume-entry-date {
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    color: #333;
+    font-weight: 400;
+}
+[data-template="executive-professional"] .rb-resume-entry-location {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 10pt;
+    color: #333;
+}
+[data-template="executive-professional"] .rb-resume-summary {
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    font-size: 11pt;
+    color: #000;
+    line-height: 1.5;
+}
+[data-template="executive-professional"] .rb-resume-list li {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    color: #000;
+    margin-bottom: 4pt;
+}
+/* Pipe-separated skills */
+[data-template="executive-professional"] .rb-resume-skills-list {
+    display: block;
+}
+[data-template="executive-professional"] .rb-resume-skill {
+    display: inline;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    color: #000;
+}
+[data-template="executive-professional"] .rb-resume-skill + .rb-resume-skill::before {
+    content: " | ";
+    color: #666;
+}
+
+
+/* ── 4. ENTRY LEVEL ──────────────────────────
+   Calibri, blue #1a5490, 2px solid blue sections
+   ─────────────────────────────────────────── */
+[data-template="entry-level"] {
+    font-family: Calibri, Arial, sans-serif;
+    color: #333;
+}
+[data-template="entry-level"] .rb-resume-header {
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 14px;
+}
+[data-template="entry-level"] .rb-resume-name {
+    font-size: 24pt;
+    font-weight: bold;
+    color: #1a5490;
+    letter-spacing: 0;
+}
+[data-template="entry-level"] .rb-resume-title {
+    font-size: 11pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #555;
+}
+[data-template="entry-level"] .rb-resume-contact {
+    font-size: 10.5pt;
+    color: #333;
+    line-height: 1.5;
+}
+[data-template="entry-level"] .rb-resume-section-title {
+    font-size: 13pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: #1a5490;
+    border-bottom: 2px solid #1a5490;
+    padding-bottom: 3pt;
+    margin-bottom: 6pt;
+    background: none;
+    border-left: none;
+    padding-left: 0;
+}
+[data-template="entry-level"] .rb-resume-entry-title {
+    font-size: 11.5pt;
+    font-weight: bold;
+    color: #333;
+}
+[data-template="entry-level"] .rb-resume-entry-subtitle {
+    font-style: italic;
+    font-weight: 400;
+    color: #555;
+}
+[data-template="entry-level"] .rb-resume-entry-date {
+    font-style: italic;
+    color: #555;
+}
+[data-template="entry-level"] .rb-resume-summary {
+    font-size: 11pt;
+    color: #333;
+}
+[data-template="entry-level"] .rb-resume-list li {
+    font-size: 11pt;
+    color: #333;
+}
+[data-template="entry-level"] .rb-resume-skills-list {
+    display: block;
+}
+[data-template="entry-level"] .rb-resume-skill {
+    display: inline;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 11pt;
+    color: #333;
+    border-radius: 0;
+}
+[data-template="entry-level"] .rb-resume-skill::after {
+    content: ", ";
+}
+[data-template="entry-level"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+
+/* ── 5. TECHNICAL / IT ───────────────────────
+   Arial, black, 1px solid black sections,
+   fixed-width skill category labels
+   ─────────────────────────────────────────── */
+[data-template="technical-it"] {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+}
+[data-template="technical-it"] .rb-resume-header {
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 14px;
+}
+[data-template="technical-it"] .rb-resume-name {
+    font-size: 22pt;
+    font-weight: bold;
+    color: #000;
+    letter-spacing: 0;
+}
+[data-template="technical-it"] .rb-resume-title {
+    font-size: 10.5pt;
+    font-weight: 400;
+    color: #333;
+}
+[data-template="technical-it"] .rb-resume-contact {
+    font-size: 10pt;
+    color: #000;
+}
+[data-template="technical-it"] .rb-resume-section-title {
+    font-size: 12pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: #000;
+    border-bottom: 1px solid #000;
+    padding-bottom: 2pt;
+    margin-bottom: 6pt;
+    background: none;
+    border-left: none;
+    padding-left: 0;
+}
+[data-template="technical-it"] .rb-resume-entry-title {
+    font-size: 11pt;
+    font-weight: bold;
+    color: #000;
+}
+[data-template="technical-it"] .rb-resume-entry-subtitle {
+    font-style: normal;
+    font-weight: 400;
+    color: #000;
+}
+[data-template="technical-it"] .rb-resume-entry-date {
+    color: #000;
+    font-weight: 400;
+}
+[data-template="technical-it"] .rb-resume-summary {
+    font-size: 10.5pt;
+    color: #000;
+}
+[data-template="technical-it"] .rb-resume-list li {
+    font-size: 10pt;
+    color: #000;
+    margin-bottom: 3pt;
+}
+/* Tech category skill rows */
+[data-template="technical-it"] .rb-resume-tech-skills {
+    display: block;
+}
+[data-template="technical-it"] .rb-resume-tech-row {
+    font-size: 10pt;
+    color: #000;
+    margin-bottom: 6pt;
+}
+[data-template="technical-it"] .rb-resume-tech-label {
+    display: inline;
+    font-size: 10pt;
+    color: #000;
+    font-weight: 400;
+}
+/* Fallback if grouped format used */
+[data-template="technical-it"] .rb-resume-skills-list {
+    display: block;
+}
+[data-template="technical-it"] .rb-resume-skill {
+    display: inline;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 10pt;
+    color: #000;
+    border-radius: 0;
+}
+[data-template="technical-it"] .rb-resume-skill::after {
+    content: ", ";
+}
+[data-template="technical-it"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+
+/* ── 6. CREATIVE PROFESSIONAL ────────────────
+   Calibri, purple #6b46c1, no section borders,
+   italic company-details under role title
+   ─────────────────────────────────────────── */
+[data-template="creative-professional"] {
+    font-family: Calibri, Arial, sans-serif;
+    color: #2c2c2c;
+}
+[data-template="creative-professional"] .rb-resume-header {
+    text-align: left;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 16px;
+}
+[data-template="creative-professional"] .rb-resume-name {
+    font-size: 28pt;
+    font-weight: bold;
+    color: #6b46c1;
+    letter-spacing: -0.5pt;
+}
+[data-template="creative-professional"] .rb-resume-title {
+    font-size: 13pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #666;
+}
+[data-template="creative-professional"] .rb-resume-contact {
+    font-size: 10pt;
+    color: #2c2c2c;
+    line-height: 1.6;
+}
+[data-template="creative-professional"] .rb-resume-section-title {
+    font-size: 13pt;
+    font-weight: bold;
+    color: #6b46c1;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 8pt;
+    background: none;
+    border-left: none;
+    padding-left: 0;
+}
+[data-template="creative-professional"] .rb-resume-entry-title {
+    font-size: 11.5pt;
+    font-weight: bold;
+    color: #333;
+}
+[data-template="creative-professional"] .rb-resume-entry-subtitle {
+    font-size: 10pt;
+    font-style: italic;
+    font-weight: 400;
+    color: #666;
+}
+[data-template="creative-professional"] .rb-resume-entry-date {
+    font-style: italic;
+    color: #666;
+    font-weight: 400;
+}
+[data-template="creative-professional"] .rb-resume-summary {
+    font-size: 11pt;
+    color: #2c2c2c;
+}
+[data-template="creative-professional"] .rb-resume-list li {
+    font-size: 11pt;
+    color: #2c2c2c;
+    margin-bottom: 4pt;
+}
+[data-template="creative-professional"] .rb-resume-skills-list {
     display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: inherit;
-    opacity: 0.7;
+    flex-wrap: wrap;
+    gap: 0;
+}
+[data-template="creative-professional"] .rb-resume-skill {
+    display: inline;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 11pt;
+    color: #2c2c2c;
+    border-radius: 0;
+}
+[data-template="creative-professional"] .rb-resume-skill + .rb-resume-skill::before {
+    content: ", ";
 }
 
-.rb-skill-tag button:hover {
-    opacity: 1;
+#pdf-resume {
+   width: 794px;
+   padding: 20mm 16mm;
+   box-sizing: border-box;
 }
 
-/* Responsive: keep resume readable at small zoom */
-@media (max-width: 480px) {
-    .rb-resume-name {
-        font-size: 16pt;
-    }
-
-    .rb-resume-section-title {
-        font-size: 9pt;
-    }
+#pdf-resume,
+#pdf-resume * {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-/* fs variable used in app.js inline styles */
-:root {
-    --fs-12-18: clamp(0.75rem, 1.5vw, 1.125rem);
+
+.rb-resume-entry-header {
+  min-width: 0;
+}
+
+.rb-resume-entry-title,
+.rb-resume-entry-subtitle,
+.rb-resume-entry-date,
+.rb-resume-summary,
+.rb-resume-list li {
+  overflow-wrap: anywhere;
+}
+
+/* Fix flex overflow in preview modal */
+.resume-preview,
+.resume-preview * {
+  min-width: 0;
+}
+
+.resume-preview {
+  overflow-x: hidden;
+}
+
+.resume-preview,
+.resume-preview * {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* ==========================================
-   PRINT / PDF EXPORT
-   Ensures clean A4 output with no blank pages
+   FORCE SAFE WORD BREAKING IN RESUME
    ========================================== */
-@media print {
 
-    /* Hide everything except the resume */
-    body>*:not(#resume-output) {
-        display: none !important;
-    }
-
-    /* Reset resume to full printable area */
-    #resume-output {
-        position: static !important;
-        width: 100% !important;
-        padding: 15mm 12mm !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        transform: none !important;
-        font-size: 10pt !important;
-        line-height: 1.4 !important;
-        min-height: auto !important;
-    }
-
-    /* Avoid page breaks inside entries */
-    .rb-resume-entry,
-    .rb-resume-section {
-        page-break-inside: avoid;
-        break-inside: avoid;
-    }
-
-    /* Section titles stay with their content */
-    .rb-resume-section-title {
-        page-break-after: avoid;
-        break-after: avoid;
-    }
+/* Allow flex children to shrink properly */
+.rb-resume-entry-header,
+.rb-resume-entry-header > div {
+    min-width: 0;
 }
+
+/* Force long strings to wrap everywhere */
+.resume,
+.resume * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Extra safety for problematic fields */
+.rb-resume-entry-title,
+.rb-resume-entry-subtitle,
+.rb-resume-entry-date,
+.rb-resume-summary,
+.rb-resume-entry-description,
+.rb-resume-list li,
+.rb-resume-contact {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
