@@ -40,6 +40,13 @@ body {
     line-height: 1.5;
 }
 
+/* Icon images (reference assets/svg/*.svg) */
+img.icon {
+    display: inline-block;
+    vertical-align: middle;
+    object-fit: contain;
+}
+
 /* ==========================================
    HEADER
    ========================================== */
@@ -232,7 +239,8 @@ button {
     background: var(--primary-light);
 }
 
-.nav-tab svg {
+.nav-tab svg,
+.nav-tab .icon {
     width: 18px;
     height: 18px;
     flex-shrink: 0;
@@ -355,7 +363,8 @@ button {
     margin-bottom: 0.75rem;
 }
 
-.tips-header svg {
+.tips-header svg,
+.tips-header .icon {
     color: var(--primary-dark);
 }
 
@@ -515,7 +524,8 @@ textarea {
     color: var(--gray-500);
 }
 
-.empty-state svg {
+.empty-state svg,
+.empty-state .icon {
     margin-bottom: 1rem;
     opacity: 0.3;
 }
@@ -634,7 +644,8 @@ textarea {
     color: var(--gray-500);
 }
 
-.resume-placeholder svg {
+.resume-placeholder svg,
+.resume-placeholder .icon {
     margin-bottom: 1rem;
     opacity: 0.3;
 }
@@ -789,7 +800,8 @@ textarea {
         font-size: 0.8125rem;
     }
 
-    .nav-tab svg {
+    .nav-tab svg,
+    .nav-tab .icon {
         width: 16px;
         height: 16px;
     }
@@ -957,5 +969,241 @@ textarea {
 
     .preview-panel.open {
         overflow-y: auto;
+    }
+}
+
+/* ==========================================
+   ADDITIONAL FIXES FOR COMPONENTS
+   ========================================== */
+
+/* ATS Tips Collapsible */
+.ats-tips.collapsed .tips-content {
+    display: none;
+}
+
+.ats-tips.collapsed .tips-header button svg,
+.ats-tips.collapsed .tips-header button .icon {
+    transform: rotate(-90deg);
+}
+
+/* Skill Input Card */
+.skill-input-card {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    padding: var(--space-3);
+    background: var(--gray-50);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-2);
+}
+
+.skill-input-card input {
+    flex: 1;
+}
+
+.input-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+/* Toast Animations */
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+}
+
+/* List Item Improvements */
+.list-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.list-item:last-child {
+    margin-bottom: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-4);
+    gap: var(--space-3);
+}
+
+.item-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--gray-900);
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
+
+.btn-delete {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    box-shadow: var(--shadow);
+}
+
+.btn-delete svg,
+.btn-delete .icon {
+    flex-shrink: 0;
+}
+
+/* Form Improvements */
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: var(--space-2);
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+/* Skills Container when empty */
+.skills-grid {
+    min-height: 50px;
+}
+
+.skills-grid .empty-state {
+    width: 100%;
+}
+
+/* Character count colors */
+.counter.warning {
+    color: var(--warning);
+}
+
+.counter.over {
+    color: var(--error);
+    font-weight: 700;
+}
+
+/* Resume placeholder */
+.resume-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: var(--gray-400);
+    text-align: center;
+    padding: var(--space-8);
+}
+
+.resume-placeholder svg,
+.resume-placeholder .icon {
+    margin-bottom: var(--space-4);
+    opacity: 0.3;
+}
+
+.resume-placeholder p {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+/* Fix zoom wrapper */
+.resume-wrapper {
+    transform-origin: top center;
+    transition: transform 200ms ease;
+    margin: 0 auto;
+}
+
+/* Mobile responsive fixes for forms */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+    
+    .item-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn-delete {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .skill-input-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .input-actions {
+        width: 100%;
+    }
+    
+    .input-actions button {
+        flex: 1;
+    }
+    
+    .list-item {
+        padding: var(--space-4);
+    }
+}
+
+@media (max-width: 480px) {
+    .list-item {
+        padding: var(--space-3);
+    }
+    
+    .item-header {
+        margin-bottom: var(--space-3);
+    }
+    
+    .btn-delete span {
+        display: none;
+    }
+    
+    .btn-delete {
+        padding: var(--space-2);
+        width: auto;
     }
 }

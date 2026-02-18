@@ -17,18 +17,11 @@
             </div>
             <div class="header-actions">
                 <button class="btn-secondary" id="clear-all-data">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
+                    <img src="assets/svg/trash.svg" width="18" height="18" alt="" class="icon">
                     <span>Clear</span>
                 </button>
                 <button class="btn-primary" id="download-pdf">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+                    <img src="assets/svg/download.svg" width="18" height="18" alt="" class="icon">
                     <span>Download PDF</span>
                 </button>
             </div>
@@ -58,73 +51,47 @@
         <!-- Navigation Tabs with Scroll Wrapper -->
         <div class="nav-tabs-wrapper" id="nav-tabs-wrapper">
             <button class="nav-scroll-indicator left" id="scroll-left" aria-label="Scroll left">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
+                <img src="assets/svg/chevron-left.svg" width="20" height="20" alt="" class="icon">
             </button>
             <nav class="nav-tabs" id="nav-tabs">
             <button class="nav-tab active" data-section="personal">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
+                <img src="assets/svg/user.svg" width="24" height="24" alt="" class="icon">
                 <span>Personal Info</span>
                 <span class="badge" id="badge-personal"></span>
             </button>
             <button class="nav-tab" data-section="summary">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="17" y1="10" x2="3" y2="10"></line>
-                    <line x1="21" y1="6" x2="3" y2="6"></line>
-                    <line x1="21" y1="14" x2="3" y2="14"></line>
-                    <line x1="17" y1="18" x2="3" y2="18"></line>
-                </svg>
+                <img src="assets/svg/document.svg" width="24" height="24" alt="" class="icon">
                 <span>Summary</span>
                 <span class="badge" id="badge-summary"></span>
             </button>
             <button class="nav-tab" data-section="experience">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                </svg>
+                <img src="assets/svg/briefcase.svg" width="24" height="24" alt="" class="icon">
                 <span>Experience</span>
                 <span class="badge" id="badge-experience"></span>
             </button>
             <button class="nav-tab" data-section="projects">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="16 18 22 12 16 6"></polyline>
-                    <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
+                <img src="assets/svg/code.svg" width="24" height="24" alt="" class="icon">
                 <span>Projects</span>
                 <span class="badge" id="badge-projects"></span>
             </button>
             <button class="nav-tab" data-section="education">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                </svg>
+                <img src="assets/svg/education.svg" width="24" height="24" alt="" class="icon">
                 <span>Education</span>
                 <span class="badge" id="badge-education"></span>
             </button>
             <button class="nav-tab" data-section="skills">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-                </svg>
+                <img src="assets/svg/skills.svg" width="24" height="24" alt="" class="icon">
                 <span>Skills</span>
                 <span class="badge" id="badge-skills"></span>
             </button>
             <button class="nav-tab" data-section="certifications">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="8" r="7"></circle>
-                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                </svg>
+                <img src="assets/svg/certificate.svg" width="24" height="24" alt="" class="icon">
                 <span>Certifications</span>
                 <span class="badge" id="badge-certifications"></span>
             </button>
         </nav>
         <button class="nav-scroll-indicator right" id="scroll-right" aria-label="Scroll right">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
+            <img src="assets/svg/chevron-right.svg" width="20" height="20" alt="" class="icon">
         </button>
         </div>
     </header>
@@ -137,16 +104,10 @@
                 <!-- ATS Tips -->
                 <div class="ats-tips" id="ats-tips">
                     <div class="tips-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
+                        <img src="assets/svg/info.svg" width="20" height="20" alt="" class="icon">
                         <h3>ATS Optimization Tips</h3>
                         <button class="zoom-btn" id="toggle-tips">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
+                            <img src="assets/svg/chevron-down.svg" width="16" height="16" alt="" class="icon">
                         </button>
                     </div>
                     <div class="tips-content" id="ats-tips-content">
@@ -225,19 +186,13 @@
                     <div class="section-header">
                         <h2>Work Experience</h2>
                         <button class="btn-add" id="add-experience">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <img src="assets/svg/add.svg" width="16" height="16" alt="" class="icon">
                             Add Experience
                         </button>
                     </div>
                     <div id="experience-list" class="list-container">
                         <div class="empty-state" id="experience-empty">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                            </svg>
+                            <img src="assets/svg/briefcase.svg" width="64" height="64" alt="" class="icon">
                             <p>No experience added yet</p>
                             <span>Click "Add Experience" to get started</span>
                         </div>
@@ -249,19 +204,13 @@
                     <div class="section-header">
                         <h2>Projects</h2>
                         <button class="btn-add" id="add-project">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <img src="assets/svg/add.svg" width="16" height="16" alt="" class="icon">
                             Add Project
                         </button>
                     </div>
                     <div id="projects-list" class="list-container">
                         <div class="empty-state" id="projects-empty">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <polyline points="16 18 22 12 16 6"></polyline>
-                                <polyline points="8 6 2 12 8 18"></polyline>
-                            </svg>
+                            <img src="assets/svg/code.svg" width="64" height="64" alt="" class="icon">
                             <p>No projects added yet</p>
                             <span>Click "Add Project" to showcase your work</span>
                         </div>
@@ -273,19 +222,13 @@
                     <div class="section-header">
                         <h2>Education</h2>
                         <button class="btn-add" id="add-education">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <img src="assets/svg/add.svg" width="16" height="16" alt="" class="icon">
                             Add Education
                         </button>
                     </div>
                     <div id="education-list" class="list-container">
                         <div class="empty-state" id="education-empty">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-                            </svg>
+                            <img src="assets/svg/education.svg" width="64" height="64" alt="" class="icon">
                             <p>No education added yet</p>
                             <span>Click "Add Education" to add your qualifications</span>
                         </div>
@@ -297,18 +240,13 @@
                     <div class="section-header">
                         <h2>Skills</h2>
                         <button class="btn-add" id="add-skill">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <img src="assets/svg/add.svg" width="16" height="16" alt="" class="icon">
                             Add Skill
                         </button>
                     </div>
                     <div id="skills-list" class="skills-grid">
                         <div class="empty-state" id="skills-empty">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-                            </svg>
+                            <img src="assets/svg/skills.svg" width="64" height="64" alt="" class="icon">
                             <p>No skills added yet</p>
                             <span>Click "Add Skill" to list your technical skills</span>
                         </div>
@@ -320,19 +258,13 @@
                     <div class="section-header">
                         <h2>Certifications</h2>
                         <button class="btn-add" id="add-certification">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <img src="assets/svg/add.svg" width="16" height="16" alt="" class="icon">
                             Add Certification
                         </button>
                     </div>
                     <div id="certifications-list" class="list-container">
                         <div class="empty-state" id="certifications-empty">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <circle cx="12" cy="8" r="7"></circle>
-                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-                            </svg>
+                            <img src="assets/svg/certificate.svg" width="64" height="64" alt="" class="icon">
                             <p>No certifications added yet</p>
                             <span>Click "Add Certification" to add your credentials</span>
                         </div>
@@ -347,26 +279,14 @@
                 <h3>Preview</h3>
                 <div class="preview-controls">
                     <button class="zoom-btn" id="zoom-out">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            <line x1="8" y1="11" x2="14" y2="11"></line>
-                        </svg>
+                        <img src="assets/svg/zoom-out.svg" width="18" height="18" alt="" class="icon">
                     </button>
                     <span class="zoom-level" id="zoom-level">100%</span>
                     <button class="zoom-btn" id="zoom-in">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            <line x1="11" y1="8" x2="11" y2="14"></line>
-                            <line x1="8" y1="11" x2="14" y2="11"></line>
-                        </svg>
+                        <img src="assets/svg/zoom-in.svg" width="18" height="18" alt="" class="icon">
                     </button>
                     <button class="zoom-btn preview-close" id="close-preview-mobile" style="display: none;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
+                        <img src="assets/svg/close.svg" width="18" height="18" alt="" class="icon">
                     </button>
                 </div>
             </div>
@@ -374,12 +294,7 @@
                 <div class="resume-wrapper" id="resume-wrapper">
                     <div class="resume" id="resume-output">
                         <div class="resume-placeholder">
-                            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                            </svg>
+                            <img src="assets/svg/document.svg" width="80" height="80" alt="" class="icon">
                             <p>Start filling in your details to see your resume</p>
                         </div>
                     </div>
@@ -390,10 +305,7 @@
 
     <!-- Mobile Preview Toggle -->
     <button class="mobile-preview-toggle" id="toggle-preview-mobile">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-        </svg>
+        <img src="assets/svg/eye.svg" width="24" height="24" alt="" class="icon">
     </button>
 
     <!-- Toast Container -->
@@ -401,10 +313,7 @@
 
     <!-- Autosave Indicator -->
     <div class="autosave-indicator" id="autosave-indicator">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-        </svg>
+        <img src="assets/svg/check.svg" width="16" height="16" alt="" class="icon">
         <span>Auto-saved</span>
     </div>
 

@@ -53,8 +53,11 @@ function init() {
         cacheDOMElements();
         loadState();
         attachEventListeners();
-        updateATSTips(state.template);
+        updateATSTips(state.template || 'ats-tech');
         renderResume();
+        updateEmptyStates();
+        updateAllBadges();
+        updateSummaryCharCount();
     } catch (error) {
         console.error('Initialization error:', error);
         alert('Failed to initialize Resume Builder. Please refresh the page.');
@@ -62,8 +65,8 @@ function init() {
 }
 
 function cacheDOMElements() {
-    dom.navItems = document.querySelectorAll('.rb-nav-item');
-    dom.sections = document.querySelectorAll('.rb-section');
+    dom.navItems = document.querySelectorAll('.nav-tab');
+    dom.sections = document.querySelectorAll('.section');
     dom.templateSelect = document.getElementById('template-select');
     dom.downloadBtn = document.getElementById('download-pdf');
     dom.resumeOutput = document.getElementById('resume-output');
@@ -93,14 +96,29 @@ function cacheDOMElements() {
 }
 
 function attachEventListeners() {
-    dom.navItems.forEach(item => {
-        item.addEventListener('click', handleNavClick);
-    });
-    
+    if (dom.navItems && dom.navItems.length) {
+        dom.navItems.forEach(item => {
+            item.addEventListener('click', handleNavClick);
+        });
+    }
+
+    const clearAllBtn = document.getElementById('clear-all-data');
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', handleClearAllData);
+    }
+
+    const toggleTipsBtn = document.getElementById('toggle-tips');
+    if (toggleTipsBtn) {
+        toggleTipsBtn.addEventListener('click', () => {
+            const atsTips = document.getElementById('ats-tips');
+            if (atsTips) atsTips.classList.toggle('collapsed');
+        });
+    }
+
     if (dom.templateSelect) {
         dom.templateSelect.addEventListener('change', handleTemplateChange);
     }
-    
+
     if (dom.downloadBtn) {
         dom.downloadBtn.addEventListener('click', handleDownloadPDF);
     }
@@ -138,23 +156,80 @@ function attachEventListeners() {
 
 function handleNavClick(e) {
     const sectionName = e.currentTarget.dataset.section;
-    
-    dom.navItems.forEach(item => item.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    
-    dom.sections.forEach(section => {
-        section.classList.remove('active');
-        if (section.dataset.section === sectionName) {
-            section.classList.add('active');
-        }
-    });
+    if (!sectionName) return;
+
+    if (dom.navItems && dom.navItems.length) {
+        dom.navItems.forEach(item => item.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+    }
+    if (dom.sections && dom.sections.length) {
+        dom.sections.forEach(section => {
+            section.classList.remove('active');
+            if (section.dataset.section === sectionName) {
+                section.classList.add('active');
+            }
+        });
+    }
 }
 
 function handleTemplateChange(e) {
-    state.template = e.target.value;
-    updateATSTips(e.target.value);
+    state.template = e.target.value || 'ats-tech';
+    updateATSTips(state.template);
     saveState();
     renderResume();
+}
+
+function handleClearAllData() {
+    if (!confirm('Clear all resume data? This cannot be undone.')) return;
+    state.data = {
+        personal: {
+            fullName: '',
+            jobTitle: '',
+            email: '',
+            phone: '',
+            location: '',
+            linkedin: '',
+            github: '',
+            portfolio: ''
+        },
+        summary: '',
+        experience: [],
+        projects: [],
+        education: [],
+        skills: [],
+        certifications: []
+    };
+    state.template = 'ats-tech';
+    if (dom.templateSelect) dom.templateSelect.value = state.template;
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+}
+
+function updateEmptyStates() {
+    const map = [
+        ['experience', 'experience-empty', 'experience-list', 'rb-list-item'],
+        ['projects', 'projects-empty', 'projects-list', 'rb-list-item'],
+        ['education', 'education-empty', 'education-list', 'rb-list-item'],
+        ['skills', 'skills-empty', 'skills-list', 'rb-skill-tag'],
+        ['certifications', 'certifications-empty', 'certifications-list', 'rb-list-item']
+    ];
+    map.forEach(([key, emptyId, listId, itemClass]) => {
+        const emptyEl = document.getElementById(emptyId);
+        const listEl = document.getElementById(listId);
+        if (!emptyEl || !listEl) return;
+        const hasItems = listEl.querySelector(`.${itemClass}`);
+        emptyEl.style.display = hasItems ? 'none' : 'flex';
+    });
+}
+
+function updateSummaryCharCount() {
+    const el = document.getElementById('summary-char-count');
+    if (!el) return;
+    const len = (state.data.summary || '').length;
+    const max = 500;
+    el.textContent = `${len} / ${max}`;
+    if (len > max) el.classList.add('over-limit');
+    else el.classList.remove('over-limit');
 }
 
 function updateATSTips(template) {
@@ -272,20 +347,30 @@ function updateATSTips(template) {
 }
 
 function handlePersonalInput(e) {
-    const field = e.target.id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-    state.data.personal[field] = e.target.value.trim();
+    const id = e.target.id;
+    if (!id) return;
+    const field = id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    if (!state.data.personal.hasOwnProperty(field)) return;
+    state.data.personal[field] = (e.target.value || '').trim();
     saveState();
     renderResume();
+    updateAllBadges();
 }
 
 function handleSummaryInput(e) {
-    state.data.summary = e.target.value.trim();
+    const val = (e.target.value || '').trim();
+    state.data.summary = val.length > 500 ? val.slice(0, 500) : val;
+    if (e.target.value !== state.data.summary) e.target.value = state.data.summary;
     saveState();
     renderResume();
+    updateSummaryCharCount();
+    updateAllBadges();
 }
 
 function addExperience(data = null) {
-    const id = Date.now().toString();
+    if (!dom.experienceList) return;
+    const id = (data && data.id) ? data.id : Date.now().toString();
+    if (data && !data.id) data.id = id;
     const experience = data || {
         id,
         company: '',
@@ -296,7 +381,7 @@ function addExperience(data = null) {
         current: false,
         description: ''
     };
-    
+
     if (!data) {
         state.data.experience.push(experience);
         saveState();
@@ -307,7 +392,7 @@ function addExperience(data = null) {
             <div class="rb-list-item-header">
                 <h3 class="rb-section-title" style="font-size: var(--fs-12-18);">Experience Entry</h3>
                 <div class="rb-list-item-actions">
-                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeExperience('${experience.id}')">
+                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeExperience('${String(experience.id).replace(/'/g, "\\'")}')">
                         <img src="assets/svg/delete.svg" alt="Delete" class="rb-icon" style="width: 1rem; height: 1rem;">
                         Delete
                     </button>
@@ -317,17 +402,17 @@ function addExperience(data = null) {
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Company</label>
-                        <input type="text" class="rb-input" data-field="company" value="${experience.company}" placeholder="Acme Corporation">
+                        <input type="text" class="rb-input" data-field="company" value="${escapeHTML(experience.company || '')}" placeholder="Acme Corporation">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Position</label>
-                        <input type="text" class="rb-input" data-field="position" value="${experience.position}" placeholder="Senior Developer">
+                        <input type="text" class="rb-input" data-field="position" value="${escapeHTML(experience.position || '')}" placeholder="Senior Developer">
                     </div>
                 </div>
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Location</label>
-                        <input type="text" class="rb-input" data-field="location" value="${experience.location}" placeholder="San Francisco, CA">
+                        <input type="text" class="rb-input" data-field="location" value="${escapeHTML(experience.location || '')}" placeholder="San Francisco, CA">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">
@@ -339,21 +424,21 @@ function addExperience(data = null) {
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Start Date</label>
-                        <input type="text" class="rb-input" data-field="startDate" value="${experience.startDate}" placeholder="January 2020">
+                        <input type="text" class="rb-input" data-field="startDate" value="${escapeHTML(experience.startDate || '')}" placeholder="January 2020">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">End Date</label>
-                        <input type="text" class="rb-input" data-field="endDate" value="${experience.endDate}" placeholder="Present" ${experience.current ? 'disabled' : ''}>
+                        <input type="text" class="rb-input" data-field="endDate" value="${escapeHTML(experience.endDate || '')}" placeholder="Present" ${experience.current ? 'disabled' : ''}>
                     </div>
                 </div>
                 <div class="rb-form-group">
                     <label class="rb-label">Description</label>
-                    <textarea class="rb-textarea" data-field="description" rows="4" placeholder="Key achievements and responsibilities...">${experience.description}</textarea>
+                    <textarea class="rb-textarea" data-field="description" rows="4" placeholder="Key achievements and responsibilities...">${escapeHTML(experience.description || '')}</textarea>
                 </div>
             </div>
         </div>
     `;
-    
+
     dom.experienceList.insertAdjacentHTML('beforeend', itemHTML);
     
     const item = dom.experienceList.querySelector(`[data-id="${experience.id}"]`);
@@ -367,17 +452,21 @@ function addExperience(data = null) {
         if (input.dataset.field === 'current') {
             input.addEventListener('change', (e) => {
                 const endDateInput = item.querySelector('[data-field="endDate"]');
-                if (e.target.checked) {
-                    endDateInput.disabled = true;
-                    endDateInput.value = 'Present';
-                    updateExperience(experience.id, 'endDate', 'Present');
-                } else {
-                    endDateInput.disabled = false;
+                if (endDateInput) {
+                    if (e.target.checked) {
+                        endDateInput.disabled = true;
+                        endDateInput.value = 'Present';
+                        updateExperience(experience.id, 'endDate', 'Present');
+                    } else {
+                        endDateInput.disabled = false;
+                    }
                 }
                 updateExperience(experience.id, 'current', e.target.checked);
             });
         }
     });
+    updateEmptyStates();
+    updateAllBadges();
 }
 
 function updateExperience(id, field, value) {
@@ -390,18 +479,23 @@ function updateExperience(id, field, value) {
 }
 
 function removeExperience(id) {
+    if (!id) return;
     state.data.experience = state.data.experience.filter(exp => exp.id !== id);
-    const item = dom.experienceList.querySelector(`[data-id="${id}"]`);
-    if (item) {
-        item.remove();
+    if (dom.experienceList) {
+        const item = dom.experienceList.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
     }
     saveState();
     renderResume();
+    updateEmptyStates();
+    updateAllBadges();
     showToast('Experience entry deleted', 'success');
 }
 
 function addEducation(data = null) {
-    const id = Date.now().toString();
+    if (!dom.educationList) return;
+    const id = (data && data.id) ? data.id : Date.now().toString();
+    if (data && !data.id) data.id = id;
     const education = data || {
         id,
         institution: '',
@@ -411,7 +505,7 @@ function addEducation(data = null) {
         graduationDate: '',
         gpa: ''
     };
-    
+
     if (!data) {
         state.data.education.push(education);
         saveState();
@@ -422,7 +516,7 @@ function addEducation(data = null) {
             <div class="rb-list-item-header">
                 <h3 class="rb-section-title" style="font-size: var(--fs-12-18);">Education Entry</h3>
                 <div class="rb-list-item-actions">
-                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeEducation('${education.id}')">
+                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeEducation('${String(education.id).replace(/'/g, "\\'")}')">
                         <img src="assets/svg/delete.svg" alt="Delete" class="rb-icon" style="width: 1rem; height: 1rem;">
                         Delete
                     </button>
@@ -432,37 +526,37 @@ function addEducation(data = null) {
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Institution</label>
-                        <input type="text" class="rb-input" data-field="institution" value="${education.institution}" placeholder="University of California">
+                        <input type="text" class="rb-input" data-field="institution" value="${escapeHTML(education.institution || '')}" placeholder="University of California">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Degree</label>
-                        <input type="text" class="rb-input" data-field="degree" value="${education.degree}" placeholder="Bachelor of Science">
+                        <input type="text" class="rb-input" data-field="degree" value="${escapeHTML(education.degree || '')}" placeholder="Bachelor of Science">
                     </div>
                 </div>
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Field of Study</label>
-                        <input type="text" class="rb-input" data-field="field" value="${education.field}" placeholder="Computer Science">
+                        <input type="text" class="rb-input" data-field="field" value="${escapeHTML(education.field || '')}" placeholder="Computer Science">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Location</label>
-                        <input type="text" class="rb-input" data-field="location" value="${education.location}" placeholder="Berkeley, CA">
+                        <input type="text" class="rb-input" data-field="location" value="${escapeHTML(education.location || '')}" placeholder="Berkeley, CA">
                     </div>
                 </div>
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Graduation Date</label>
-                        <input type="text" class="rb-input" data-field="graduationDate" value="${education.graduationDate}" placeholder="May 2020">
+                        <input type="text" class="rb-input" data-field="graduationDate" value="${escapeHTML(education.graduationDate || '')}" placeholder="May 2020">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">GPA (Optional)</label>
-                        <input type="text" class="rb-input" data-field="gpa" value="${education.gpa}" placeholder="3.8/4.0">
+                        <input type="text" class="rb-input" data-field="gpa" value="${escapeHTML(education.gpa || '')}" placeholder="3.8/4.0">
                     </div>
                 </div>
             </div>
         </div>
     `;
-    
+
     dom.educationList.insertAdjacentHTML('beforeend', itemHTML);
     
     const item = dom.educationList.querySelector(`[data-id="${education.id}"]`);
@@ -473,6 +567,8 @@ function addEducation(data = null) {
             updateEducation(education.id, e.target.dataset.field, e.target.value);
         }, 300));
     });
+    updateEmptyStates();
+    updateAllBadges();
 }
 
 function updateEducation(id, field, value) {
@@ -485,18 +581,23 @@ function updateEducation(id, field, value) {
 }
 
 function removeEducation(id) {
+    if (!id) return;
     state.data.education = state.data.education.filter(edu => edu.id !== id);
-    const item = dom.educationList.querySelector(`[data-id="${id}"]`);
-    if (item) {
-        item.remove();
+    if (dom.educationList) {
+        const item = dom.educationList.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
     }
     saveState();
     renderResume();
+    updateEmptyStates();
+    updateAllBadges();
     showToast('Education entry deleted', 'success');
 }
 
 function addProject(data = null) {
-    const id = Date.now().toString();
+    if (!dom.projectsList) return;
+    const id = (data && data.id) ? data.id : Date.now().toString();
+    if (data && !data.id) data.id = id;
     const project = data || {
         id,
         name: '',
@@ -505,7 +606,7 @@ function addProject(data = null) {
         link: '',
         highlights: ''
     };
-    
+
     if (!data) {
         state.data.projects.push(project);
         saveState();
@@ -516,7 +617,7 @@ function addProject(data = null) {
             <div class="rb-list-item-header">
                 <h3 class="rb-section-title" style="font-size: var(--fs-12-18);">Project Entry</h3>
                 <div class="rb-list-item-actions">
-                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeProject('${project.id}')">
+                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeProject('${String(project.id).replace(/'/g, "\\'")}')">
                         <img src="assets/svg/delete.svg" alt="Delete" class="rb-icon" style="width: 1rem; height: 1rem;">
                         Delete
                     </button>
@@ -526,31 +627,31 @@ function addProject(data = null) {
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Project Name</label>
-                        <input type="text" class="rb-input" data-field="name" value="${project.name}" placeholder="E-Commerce Platform">
+                        <input type="text" class="rb-input" data-field="name" value="${escapeHTML(project.name || '')}" placeholder="E-Commerce Platform">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Project Link (Optional)</label>
-                        <input type="url" class="rb-input" data-field="link" value="${project.link}" placeholder="github.com/username/project">
+                        <input type="url" class="rb-input" data-field="link" value="${escapeHTML(project.link || '')}" placeholder="github.com/username/project">
                     </div>
                 </div>
                 <div class="rb-form-group">
                     <label class="rb-label">Tech Stack</label>
-                    <input type="text" class="rb-input" data-field="techStack" value="${project.techStack}" placeholder="React, Node.js, MongoDB, Express">
+                    <input type="text" class="rb-input" data-field="techStack" value="${escapeHTML(project.techStack || '')}" placeholder="React, Node.js, MongoDB, Express">
                 </div>
                 <div class="rb-form-group">
                     <label class="rb-label">Description</label>
-                    <textarea class="rb-textarea" data-field="description" rows="3" placeholder="Brief description of the project...">${project.description}</textarea>
+                    <textarea class="rb-textarea" data-field="description" rows="3" placeholder="Brief description of the project...">${escapeHTML(project.description || '')}</textarea>
                 </div>
                 <div class="rb-form-group">
                     <label class="rb-label">Key Highlights (one per line)</label>
                     <textarea class="rb-textarea" data-field="highlights" rows="4" placeholder="Built responsive UI with role-based access control
 Implemented complete CRUD operations
-Integrated Cloudinary for media storage">${project.highlights}</textarea>
+Integrated Cloudinary for media storage">${escapeHTML(project.highlights || '')}</textarea>
                 </div>
             </div>
         </div>
     `;
-    
+
     dom.projectsList.insertAdjacentHTML('beforeend', itemHTML);
     
     const item = dom.projectsList.querySelector(`[data-id="${project.id}"]`);
@@ -561,6 +662,8 @@ Integrated Cloudinary for media storage">${project.highlights}</textarea>
             updateProject(project.id, e.target.dataset.field, e.target.value);
         }, 300));
     });
+    updateEmptyStates();
+    updateAllBadges();
 }
 
 function updateProject(id, field, value) {
@@ -573,17 +676,21 @@ function updateProject(id, field, value) {
 }
 
 function removeProject(id) {
+    if (!id) return;
     state.data.projects = state.data.projects.filter(proj => proj.id !== id);
-    const item = dom.projectsList.querySelector(`[data-id="${id}"]`);
-    if (item) {
-        item.remove();
+    if (dom.projectsList) {
+        const item = dom.projectsList.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
     }
     saveState();
     renderResume();
+    updateEmptyStates();
+    updateAllBadges();
     showToast('Project deleted', 'success');
 }
 
 function addSkill() {
+    if (!dom.skillsList) return;
     const existingInput = dom.skillsList.querySelector('.rb-skill-input-card');
     if (existingInput) {
         existingInput.querySelector('input').focus();
@@ -624,6 +731,8 @@ function addSkill() {
             renderSkill(skill);
             saveState();
             renderResume();
+            updateEmptyStates();
+            updateAllBadges();
             showToast('Skill added successfully', 'success');
         } else {
             input.focus();
@@ -633,6 +742,7 @@ function addSkill() {
     
     const cancelAdd = () => {
         inputCard.remove();
+        updateEmptyStates();
     };
     
     saveBtn.addEventListener('click', saveSkill);
@@ -651,10 +761,13 @@ function addSkill() {
 }
 
 function renderSkill(skill) {
+    if (!dom.skillsList || !skill || !skill.id) return;
+    const name = (skill.name && String(skill.name).trim()) ? escapeHTML(skill.name) : '';
+    const safeId = String(skill.id).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const skillHTML = `
-        <div class="rb-skill-tag" data-id="${skill.id}">
-            <span>${escapeHTML(skill.name)}</span>
-            <button onclick="removeSkill('${skill.id}')" aria-label="Remove skill">
+        <div class="rb-skill-tag" data-id="${escapeHTML(skill.id)}">
+            <span>${name}</span>
+            <button onclick="removeSkill('${safeId}')" aria-label="Remove skill">
                 <img src="assets/svg/close.svg" alt="Remove" class="rb-icon" style="width: 1rem; height: 1rem;">
             </button>
         </div>
@@ -663,17 +776,22 @@ function renderSkill(skill) {
 }
 
 function removeSkill(id) {
+    if (!id) return;
     state.data.skills = state.data.skills.filter(skill => skill.id !== id);
-    const skillTag = dom.skillsList.querySelector(`[data-id="${id}"]`);
-    if (skillTag) {
-        skillTag.remove();
+    if (dom.skillsList) {
+        const skillTag = dom.skillsList.querySelector(`[data-id="${id}"]`);
+        if (skillTag) skillTag.remove();
     }
     saveState();
     renderResume();
+    updateEmptyStates();
+    updateAllBadges();
 }
 
 function addCertification(data = null) {
-    const id = Date.now().toString();
+    if (!dom.certificationsList) return;
+    const id = (data && data.id) ? data.id : Date.now().toString();
+    if (data && !data.id) data.id = id;
     const certification = data || {
         id,
         name: '',
@@ -681,7 +799,7 @@ function addCertification(data = null) {
         date: '',
         credentialId: ''
     };
-    
+
     if (!data) {
         state.data.certifications.push(certification);
         saveState();
@@ -692,7 +810,7 @@ function addCertification(data = null) {
             <div class="rb-list-item-header">
                 <h3 class="rb-section-title" style="font-size: var(--fs-12-18);">Certification Entry</h3>
                 <div class="rb-list-item-actions">
-                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeCertification('${certification.id}')">
+                    <button class="rb-btn rb-btn-danger rb-btn-small" onclick="removeCertification('${String(certification.id).replace(/'/g, "\\'")}')">
                         <img src="assets/svg/delete.svg" alt="Delete" class="rb-icon" style="width: 1rem; height: 1rem;">
                         Delete
                     </button>
@@ -702,27 +820,27 @@ function addCertification(data = null) {
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Certification Name</label>
-                        <input type="text" class="rb-input" data-field="name" value="${certification.name}" placeholder="AWS Certified Solutions Architect">
+                        <input type="text" class="rb-input" data-field="name" value="${escapeHTML(certification.name || '')}" placeholder="AWS Certified Solutions Architect">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Issuing Organization</label>
-                        <input type="text" class="rb-input" data-field="issuer" value="${certification.issuer}" placeholder="Amazon Web Services">
+                        <input type="text" class="rb-input" data-field="issuer" value="${escapeHTML(certification.issuer || '')}" placeholder="Amazon Web Services">
                     </div>
                 </div>
                 <div class="rb-form-row">
                     <div class="rb-form-group">
                         <label class="rb-label">Date Obtained</label>
-                        <input type="text" class="rb-input" data-field="date" value="${certification.date}" placeholder="June 2023">
+                        <input type="text" class="rb-input" data-field="date" value="${escapeHTML(certification.date || '')}" placeholder="June 2023">
                     </div>
                     <div class="rb-form-group">
                         <label class="rb-label">Credential ID (Optional)</label>
-                        <input type="text" class="rb-input" data-field="credentialId" value="${certification.credentialId}" placeholder="ABC123XYZ">
+                        <input type="text" class="rb-input" data-field="credentialId" value="${escapeHTML(certification.credentialId || '')}" placeholder="ABC123XYZ">
                     </div>
                 </div>
             </div>
         </div>
     `;
-    
+
     dom.certificationsList.insertAdjacentHTML('beforeend', itemHTML);
     
     const item = dom.certificationsList.querySelector(`[data-id="${certification.id}"]`);
@@ -733,6 +851,8 @@ function addCertification(data = null) {
             updateCertification(certification.id, e.target.dataset.field, e.target.value);
         }, 300));
     });
+    updateEmptyStates();
+    updateAllBadges();
 }
 
 function updateCertification(id, field, value) {
@@ -745,13 +865,16 @@ function updateCertification(id, field, value) {
 }
 
 function removeCertification(id) {
+    if (!id) return;
     state.data.certifications = state.data.certifications.filter(cert => cert.id !== id);
-    const item = dom.certificationsList.querySelector(`[data-id="${id}"]`);
-    if (item) {
-        item.remove();
+    if (dom.certificationsList) {
+        const item = dom.certificationsList.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
     }
     saveState();
     renderResume();
+    updateEmptyStates();
+    updateAllBadges();
     showToast('Certification deleted', 'success');
 }
 
@@ -1105,17 +1228,23 @@ function renderCertifications(certifications) {
 }
 
 function handleDownloadPDF() {
-    if (!state.data.personal.fullName) {
+    const fullName = (state.data.personal && state.data.personal.fullName) ? state.data.personal.fullName.trim() : '';
+    if (!fullName) {
         showToast('Please enter your name before downloading', 'warning');
         return;
     }
-    
+
     showToast('Preparing PDF download...', 'info');
-    
+
     setTimeout(() => {
         try {
             const element = dom.resumeOutput;
-            const filename = `${state.data.personal.fullName.replace(/\s+/g, '_')}_Resume.pdf`;
+            if (!element) {
+                showToast('Preview not available', 'error');
+                return;
+            }
+            const safeName = fullName.replace(/\s+/g, '_').replace(/[<>:"/\\|?*]/g, '') || 'Resume';
+            const filename = `${safeName}_Resume.pdf`;
             
             const opt = {
                 margin: [10, 10, 10, 10],
@@ -1153,71 +1282,93 @@ function handleDownloadPDF() {
 function saveState() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        showAutosaveIndicator();
     } catch (error) {
         showToast('Failed to save changes', 'error');
     }
 }
 
+function showAutosaveIndicator() {
+    const el = document.getElementById('autosave-indicator');
+    if (!el) return;
+    el.classList.add('show');
+    clearTimeout(showAutosaveIndicator._tid);
+    showAutosaveIndicator._tid = setTimeout(() => el.classList.remove('show'), 1500);
+}
+
 function loadState() {
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed && parsed.version === state.version) {
-                Object.assign(state, parsed);
-                
-                // Ensure all arrays exist (for backwards compatibility)
-                if (!state.data.projects) state.data.projects = [];
-                if (!state.data.experience) state.data.experience = [];
-                if (!state.data.education) state.data.education = [];
-                if (!state.data.skills) state.data.skills = [];
-                if (!state.data.certifications) state.data.certifications = [];
-                
-                populateForm();
-            }
-        }
+        if (!saved) return;
+        const parsed = JSON.parse(saved);
+        if (!parsed || parsed.version !== state.version) return;
+
+        state.template = parsed.template || 'ats-tech';
+        if (!parsed.data || typeof parsed.data !== 'object') return;
+
+        const defPersonal = {
+            fullName: '', jobTitle: '', email: '', phone: '', location: '',
+            linkedin: '', github: '', portfolio: ''
+        };
+        state.data.personal = { ...defPersonal, ...(parsed.data.personal || {}) };
+        state.data.summary = typeof parsed.data.summary === 'string' ? parsed.data.summary : '';
+        state.data.experience = Array.isArray(parsed.data.experience) ? parsed.data.experience : [];
+        state.data.projects = Array.isArray(parsed.data.projects) ? parsed.data.projects : [];
+        state.data.education = Array.isArray(parsed.data.education) ? parsed.data.education : [];
+        state.data.skills = Array.isArray(parsed.data.skills) ? parsed.data.skills : [];
+        state.data.certifications = Array.isArray(parsed.data.certifications) ? parsed.data.certifications : [];
+
+        ['experience', 'projects', 'education', 'certifications'].forEach(key => {
+            state.data[key].forEach((item, i) => {
+                if (!item || typeof item !== 'object') return;
+                if (!item.id) item.id = `loaded-${key}-${i}-${Date.now()}`;
+            });
+        });
+        state.data.skills.forEach((item, i) => {
+            if (item && typeof item === 'object' && !item.id) item.id = `loaded-skill-${i}-${Date.now()}`;
+        });
+
+        populateForm();
     } catch (error) {
         console.error('Load state error:', error);
-        // Clear corrupt data and start fresh
         localStorage.removeItem(STORAGE_KEY);
         showToast('Starting with fresh data', 'info');
     }
 }
 
 function populateForm() {
-    Object.keys(dom.personalInputs).forEach(key => {
-        if (dom.personalInputs[key] && state.data.personal[key]) {
-            dom.personalInputs[key].value = state.data.personal[key];
+    if (!state.data || !state.data.personal) return;
+    Object.keys(dom.personalInputs || {}).forEach(key => {
+        const input = dom.personalInputs[key];
+        if (input && state.data.personal.hasOwnProperty(key)) {
+            input.value = state.data.personal[key] || '';
         }
     });
-    
-    if (state.data.summary) {
-        dom.summaryInput.value = state.data.summary;
+
+    if (dom.summaryInput) {
+        dom.summaryInput.value = state.data.summary || '';
     }
-    
-    if (state.template) {
+    if (dom.templateSelect && state.template) {
         dom.templateSelect.value = state.template;
     }
-    
-    if (state.data.experience && Array.isArray(state.data.experience)) {
+    if (Array.isArray(state.data.experience)) {
         state.data.experience.forEach(exp => addExperience(exp));
     }
-    
-    if (state.data.projects && Array.isArray(state.data.projects)) {
+    if (Array.isArray(state.data.projects)) {
         state.data.projects.forEach(proj => addProject(proj));
     }
-    
-    if (state.data.education && Array.isArray(state.data.education)) {
+    if (Array.isArray(state.data.education)) {
         state.data.education.forEach(edu => addEducation(edu));
     }
-    
-    if (state.data.skills && Array.isArray(state.data.skills)) {
+    if (Array.isArray(state.data.skills)) {
         state.data.skills.forEach(skill => renderSkill(skill));
     }
-    
-    if (state.data.certifications && Array.isArray(state.data.certifications)) {
+    if (Array.isArray(state.data.certifications)) {
         state.data.certifications.forEach(cert => addCertification(cert));
     }
+    updateEmptyStates();
+    updateAllBadges();
+    updateSummaryCharCount();
 }
 
 function showToast(message, type = 'info') {
@@ -1237,20 +1388,23 @@ function showToast(message, type = 'info') {
 
 function createToast(message, type) {
     const container = document.getElementById('toast-container');
-    
+    if (!container) return;
+
     const iconPaths = {
         success: 'assets/svg/success.svg',
         error: 'assets/svg/error.svg',
         warning: 'assets/svg/warning.svg',
         info: 'assets/svg/info.svg'
     };
-    
+    const iconSrc = iconPaths[type] || iconPaths.info;
+    const safeType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+
     const toast = document.createElement('div');
-    toast.className = `rb-toast rb-toast-${type}`;
+    toast.className = `rb-toast rb-toast-${safeType}`;
     toast.innerHTML = `
-        <img src="${iconPaths[type]}" alt="${type}" class="rb-toast-icon">
+        <img src="${iconSrc}" alt="" class="rb-toast-icon">
         <div class="rb-toast-content">
-            <div class="rb-toast-message">${escapeHTML(message)}</div>
+            <div class="rb-toast-message">${escapeHTML(String(message || ''))}</div>
         </div>
     `;
     
@@ -1297,72 +1451,39 @@ window.removeEducation = removeEducation;
 window.removeSkill = removeSkill;
 window.removeCertification = removeCertification;
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// Mobile Menu Toggle (add this at the end of init function)
-const menuToggle = document.getElementById('menu-toggle');
-const sidenav = document.getElementById('sidenav');
-const fabPreview = document.getElementById('fab-preview');
-
-if (menuToggle && sidenav) {
-    menuToggle.addEventListener('click', () => {
-        sidenav.classList.toggle('open');
-    });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!sidenav.contains(e.target) && !menuToggle.contains(e.target)) {
-            sidenav.classList.remove('open');
-        }
-    });
-    
-    // Close menu when selecting a section
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                sidenav.classList.remove('open');
-            }
-        });
-    });
-}
-
-// Mobile Preview FAB
-if (fabPreview) {
-    fabPreview.addEventListener('click', () => {
-        const previewSidebar = document.getElementById('preview-sidebar');
-        if (previewSidebar) {
-            previewSidebar.classList.toggle('mobile-open');
-        }
-    });
-}
-
-// Update badge display function
 function updateAllBadges() {
-    ['personal', 'summary', 'experience', 'projects', 'education', 'skills', 'certifications'].forEach(section => {
+    const sections = ['personal', 'summary', 'experience', 'projects', 'education', 'skills', 'certifications'];
+    sections.forEach(section => {
         const badge = document.getElementById(`badge-${section}`);
         if (!badge) return;
-        
+
         let count = 0;
+        if (!state.data) return;
         switch (section) {
             case 'personal':
-                count = Object.values(state.data.personal).filter(v => v && v.trim()).length;
+                count = (state.data.personal && typeof state.data.personal === 'object')
+                    ? Object.values(state.data.personal).filter(v => v != null && String(v).trim()).length
+                    : 0;
                 break;
             case 'summary':
-                count = state.data.summary ? 1 : 0;
+                count = (state.data.summary && String(state.data.summary).trim()) ? 1 : 0;
                 break;
             default:
-                count = state.data[section]?.length || 0;
+                count = Array.isArray(state.data[section]) ? state.data[section].length : 0;
         }
-        
+
         if (count > 0) {
             badge.textContent = count;
             badge.classList.add('show');
         } else {
+            badge.textContent = '';
             badge.classList.remove('show');
         }
     });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
 }
