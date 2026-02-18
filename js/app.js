@@ -1899,7 +1899,7 @@ ${resumeBodyHTML}
                 const elHeight = resumeEl.scrollHeight || resumeEl.offsetHeight || 1122;
 
                 const opt = {
-                    margin:   0,
+                    margin:   [0, 0, 10, 0],
                     filename: filename,
                     image:    { type: 'jpeg', quality: 0.98 },
                    html2canvas: {
