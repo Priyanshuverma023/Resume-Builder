@@ -1581,9 +1581,8 @@ html, body {
   background: #ffffff;
   margin: 0;
   padding: 0;
-  overflow: visible;
+  overflow: hidden;   /* ← FIX: prevent scrollbar from adding offset */
 }
-
 /* ── Core resume container ── */
 #pdf-resume {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -1865,7 +1864,7 @@ ${resumeBodyHTML}
             // keeping it at position 0,0 so coordinates are correct.
             const iframe = document.createElement('iframe');
             iframe.setAttribute('aria-hidden', 'true');
-            iframe.style.cssText = [
+           iframe.style.cssText = [
                 'position:fixed',
                 'top:0',
                 'left:0',
@@ -1874,7 +1873,8 @@ ${resumeBodyHTML}
                 'border:none',
                 'opacity:0',              // invisible but on-screen
                 'pointer-events:none',    // no interaction
-                'z-index:99999'           // above everything so nothing overlaps
+                'z-index:99999',          // above everything so nothing overlaps
+                'overflow:hidden'         // ← FIX: prevent phantom scrollbar offset
             ].join(';');
 
             document.body.appendChild(iframe);
@@ -1902,13 +1902,15 @@ ${resumeBodyHTML}
                     margin:   0,
                     filename: filename,
                     image:    { type: 'jpeg', quality: 0.98 },
-                    html2canvas: {
+                   html2canvas: {
                         scale:           2,
                         useCORS:         true,
                         letterRendering: true,
                         logging:         false,
                         scrollX:         0,
                         scrollY:         0,
+                        x:               0,   // ← FIX: anchor capture to element left
+                        y:               0,   // ← FIX: anchor capture to element top
                         windowWidth:     A4_PX,
                         width:           A4_PX,
                         height:          elHeight,
