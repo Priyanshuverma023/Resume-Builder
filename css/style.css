@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap');
+
 /* ==========================================
    FIXED RESPONSIVE RESUME BUILDER
    Tested on Mobile, Tablet, Desktop
@@ -7,7 +10,7 @@
     --primary: #fbbf24;
     --primary-dark: #f59e0b;
     --primary-light: #fef3c7;
-    
+
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
@@ -15,17 +18,17 @@
     --gray-500: #6b7280;
     --gray-700: #374151;
     --gray-900: #111827;
-    
+
     --white: #ffffff;
     --black: #1f2937;
-    
+
     --success: #10b981;
     --error: #ef4444;
-    
+
     --header-height: 140px;
     --sidebar-width: 200px;
     --preview-width: 380px;
-    
+
     /* Spacing scale */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
@@ -192,8 +195,10 @@ button {
     scroll-behavior: smooth;
     overscroll-behavior-x: contain;
     /* Hide scrollbar but keep functionality */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge */
     /* Add momentum and snap */
     scroll-snap-type: x proximity;
     /* Prevent text selection while scrolling */
@@ -204,7 +209,8 @@ button {
 }
 
 .nav-tabs::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
+    /* Chrome/Safari */
     height: 0;
     width: 0;
 }
@@ -263,7 +269,7 @@ button {
     display: none;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.95), transparent);
     z-index: 10;
     cursor: pointer;
     transition: opacity 200ms;
@@ -271,12 +277,12 @@ button {
 
 .nav-scroll-indicator.left {
     left: 0;
-    background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.95), transparent);
 }
 
 .nav-scroll-indicator.right {
     right: 0;
-    background: linear-gradient(to left, rgba(255,255,255,0.95), transparent);
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.95), transparent);
 }
 
 .nav-scroll-indicator:hover {
@@ -314,10 +320,8 @@ button {
    ========================================== */
 
 .main-layout {
-    display: grid;
-    grid-template-columns: 1fr var(--preview-width);
+    display: block;
     min-height: calc(100vh - var(--header-height));
-    gap: 0;
 }
 
 /* ==========================================
@@ -326,12 +330,10 @@ button {
 
 .content-area {
     padding: 2rem;
-    overflow-y: auto;
-    max-height: calc(100vh - var(--header-height));
 }
 
 .content-container {
-    max-width: 900px;
+    max-width: 860px;
     margin: 0 auto;
 }
 
@@ -349,6 +351,7 @@ button {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -649,21 +652,144 @@ textarea {
     overflow: auto;
     padding: 1.5rem;
     background: var(--gray-100);
+    /* Center the resume at 100% zoom */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    outline: none;
+    /* Prevent text selection during drag */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .resume-wrapper {
+    /* transform-origin top center: scale grows downward and outward symmetrically */
     transform-origin: top center;
-    transition: transform 200ms;
+    transition: transform 150ms ease;
+    /* Must not shrink — allows overflow scroll when scaled up */
+    flex-shrink: 0;
+    will-change: transform;
 }
+
+/* Instant response while dragging — no transition lag */
+.preview-content.is-dragging .resume-wrapper {
+    transition: none;
+}
+
 
 .resume {
     background: white;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-height: 600px;
+    padding: 20mm 16mm;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    /* Fixed A4 width — prevents layout shift on window resize */
+    width: 210mm;
+    /* Height grows with content — no blank pages */
+    min-height: auto;
     font-size: 10.5pt;
     line-height: 1.4;
+    box-sizing: border-box;
 }
+
+/* ── Preview Modal ─────────────────────────────────────────────────────── */
+.preview-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Hidden by default */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+}
+
+.preview-modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.preview-modal {
+    background: var(--white, #fff);
+    border-radius: 1rem;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+    width: min(900px, 96vw);
+    height: min(92vh, 900px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 200ms ease;
+}
+
+.preview-modal-overlay.is-open .preview-modal {
+    transform: scale(1);
+}
+
+.preview-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--gray-200, #e5e7eb);
+    background: var(--gray-50, #f9fafb);
+    flex-shrink: 0;
+    gap: 1rem;
+}
+
+.preview-modal-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--gray-900, #111827);
+    white-space: nowrap;
+}
+
+.preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* Override zoom-btn inside modal header for slightly different bg */
+.preview-modal-header .zoom-btn {
+    background: var(--gray-100, #f3f4f6);
+}
+
+.preview-modal-header .zoom-btn:hover {
+    background: var(--gray-200, #e5e7eb);
+}
+
+/* The scrollable preview area inside the modal */
+.preview-modal .preview-content {
+    flex: 1;
+    overflow: auto;
+    padding: 2rem;
+    background: var(--gray-100, #f3f4f6);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+@media (max-width: 600px) {
+    .preview-modal {
+        width: 100vw;
+        height: 100dvh;
+        border-radius: 0;
+    }
+
+    .preview-modal-overlay {
+        padding: 0;
+    }
+}
+
+
 
 .resume-placeholder {
     display: flex;
@@ -706,7 +832,7 @@ textarea {
     pointer-events: none;
 }
 
-.toast-container > * {
+.toast-container>* {
     pointer-events: auto;
 }
 
@@ -736,6 +862,7 @@ textarea {
         transform: translateX(100%);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -747,6 +874,7 @@ textarea {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(100%);
         opacity: 0;
@@ -837,10 +965,21 @@ textarea {
     animation: rb-toast-in 0.3s ease;
 }
 
-.toast.success { border-left-color: var(--success); }
-.toast.error { border-left-color: var(--error); }
-.toast.warning { border-left-color: #f59e0b; }
-.toast.info { border-left-color: var(--primary); }
+.toast.success {
+    border-left-color: var(--success);
+}
+
+.toast.error {
+    border-left-color: var(--error);
+}
+
+.toast.warning {
+    border-left-color: #f59e0b;
+}
+
+.toast.info {
+    border-left-color: var(--primary);
+}
 
 /* Clear-all confirmation overlay & card */
 .rb-confirm-overlay {
@@ -1017,58 +1156,13 @@ textarea {
         display: none !important;
     }
 
-    /* Main Layout - Single Column */
+    /* Main Layout - Single Column on mobile */
     .main-layout {
-        grid-template-columns: 1fr;
+        display: block;
     }
 
     .content-area {
         padding: 1rem;
-        max-height: none;
-    }
-
-    /* Preview - Hidden, show with FAB */
-    .preview-panel {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 200;
-        transform: translateY(100%);
-        transition: transform 300ms;
-    }
-
-    .preview-panel.open {
-        transform: translateY(0);
-    }
-
-    .mobile-preview-toggle {
-        display: flex;
-        position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 56px;
-        height: 56px;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary);
-        color: var(--gray-900);
-        border-radius: 50%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 100;
-    }
-
-    .mobile-preview-toggle:hover {
-        background: var(--primary-dark);
-    }
-
-    .preview-close {
-        display: block;
-        width: 40px;
-        height: 40px;
-        background: var(--gray-100);
-        border-radius: 0.5rem;
     }
 
     /* Forms */
@@ -1249,6 +1343,7 @@ textarea {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(120%);
         opacity: 0;
@@ -1535,12 +1630,6 @@ textarea {
     color: var(--gray-500);
 }
 
-/* Fix zoom wrapper */
-.resume-wrapper {
-    transform-origin: top center;
-    transition: transform 200ms ease;
-    margin: 0 auto;
-}
 
 /* Mobile responsive fixes for forms */
 @media (max-width: 768px) {
@@ -1553,30 +1642,30 @@ textarea {
     .form-row:last-child {
         margin-bottom: 0;
     }
-    
+
     .item-header {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .btn-delete {
         width: 100%;
         justify-content: center;
     }
-    
+
     .skill-input-card {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .input-actions {
         width: 100%;
     }
-    
+
     .input-actions button {
         flex: 1;
     }
-    
+
     .list-item {
         padding: var(--space-4);
     }
@@ -1586,17 +1675,966 @@ textarea {
     .list-item {
         padding: var(--space-3);
     }
-    
+
     .item-header {
         margin-bottom: var(--space-3);
     }
-    
+
     .btn-delete span {
         display: none;
     }
-    
+
     .btn-delete {
         padding: var(--space-2);
         width: auto;
+    }
+}
+
+/* ==========================================
+   RESUME OUTPUT — BASE STYLES (rb-resume-*)
+   These classes are generated by renderResume() in app.js
+   ========================================== */
+
+/* Base resume container */
+.resume {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 10pt;
+    line-height: 1.45;
+    color: #1a1a1a;
+    background: #ffffff;
+}
+
+/* ── Header ── */
+.rb-resume-header {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #1a1a1a;
+    text-align: center;
+}
+
+.rb-resume-name {
+    font-size: 22pt;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+    margin: 0 0 4px;
+    color: #1a1a1a;
+}
+
+.rb-resume-title {
+    font-size: 11pt;
+    font-weight: 500;
+    color: #444;
+    margin: 0 0 8px;
+    letter-spacing: 0.3px;
+}
+
+.rb-resume-contact {
+    font-size: 8.5pt;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* ── Sections ── */
+.rb-resume-section {
+    margin-bottom: 16px;
+}
+
+.rb-resume-section-title {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #1a1a1a;
+    border-bottom: 1.5px solid #1a1a1a;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+}
+
+/* ── Entries ── */
+.rb-resume-entry {
+    margin-bottom: 12px;
+}
+
+.rb-resume-entry:last-child {
+    margin-bottom: 0;
+}
+
+.rb-resume-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.rb-resume-entry-title {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.3;
+}
+
+.rb-resume-entry-subtitle {
+    font-size: 9.5pt;
+    font-weight: 500;
+    color: #333;
+    font-style: italic;
+}
+
+.rb-resume-entry-date {
+    font-size: 8.5pt;
+    color: #555;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+}
+
+.rb-resume-entry-location {
+    font-size: 8.5pt;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.rb-resume-entry-description {
+    font-size: 9.5pt;
+    color: #333;
+    margin-top: 4px;
+    line-height: 1.5;
+}
+
+/* ── Lists ── */
+.rb-resume-list {
+    margin: 4px 0 0 16px;
+    padding: 0;
+}
+
+.rb-resume-list li {
+    font-size: 9.5pt;
+    color: #333;
+    margin-bottom: 3px;
+    line-height: 1.45;
+}
+
+/* ── Summary ── */
+.rb-resume-summary {
+    font-size: 9.5pt;
+    color: #333;
+    line-height: 1.55;
+}
+
+/* ── Skills ── */
+.rb-resume-skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.rb-resume-skill {
+    display: inline-block;
+    padding: 2px 9px;
+    border: 1px solid #999;
+    border-radius: 3px;
+    font-size: 8.5pt;
+    color: #333;
+    background: #f5f5f5;
+}
+
+/* ==========================================
+   TEMPLATE 1: SOFTWARE ENGINEERING (ats-tech)
+   Clean, modern, blue-gray accent
+   ========================================== */
+[data-template="ats-tech"] .rb-resume-header {
+    border-bottom: 3px solid #1e40af;
+    text-align: left;
+}
+
+[data-template="ats-tech"] .rb-resume-name {
+    color: #1e3a8a;
+}
+
+[data-template="ats-tech"] .rb-resume-title {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+[data-template="ats-tech"] .rb-resume-section-title {
+    color: #1e40af;
+    border-bottom-color: #1e40af;
+    border-bottom-width: 2px;
+}
+
+[data-template="ats-tech"] .rb-resume-entry-title {
+    color: #1e3a8a;
+}
+
+[data-template="ats-tech"] .rb-resume-skill {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1e40af;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   TEMPLATE 2: DATA SCIENCE / AI / ML (ats-data-science)
+   Purple accent, pill-style skills
+   ========================================== */
+[data-template="ats-data-science"] .rb-resume-header {
+    border-bottom: 3px solid #7c3aed;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-data-science"] .rb-resume-name {
+    color: #4c1d95;
+}
+
+[data-template="ats-data-science"] .rb-resume-title {
+    color: #7c3aed;
+    font-weight: 600;
+}
+
+[data-template="ats-data-science"] .rb-resume-section-title {
+    color: #7c3aed;
+    border-bottom: none;
+    background: #f5f3ff;
+    padding: 3px 8px;
+    border-left: 4px solid #7c3aed;
+    border-radius: 0 3px 3px 0;
+}
+
+[data-template="ats-data-science"] .rb-resume-entry-title {
+    color: #4c1d95;
+}
+
+[data-template="ats-data-science"] .rb-resume-skill {
+    background: #f5f3ff;
+    border-color: #c4b5fd;
+    color: #6d28d9;
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 2px 10px;
+}
+
+/* ==========================================
+   TEMPLATE 3: DEVOPS / CLOUD (ats-devops)
+   Dark teal, strong left-border sections
+   ========================================== */
+[data-template="ats-devops"] .rb-resume-header {
+    border-bottom: none;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    border-radius: 4px;
+    text-align: left;
+}
+
+[data-template="ats-devops"] .rb-resume-name {
+    color: #38bdf8;
+    font-family: 'Courier New', monospace;
+    letter-spacing: -0.5px;
+}
+
+[data-template="ats-devops"] .rb-resume-title {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+[data-template="ats-devops"] .rb-resume-contact {
+    color: #64748b;
+}
+
+[data-template="ats-devops"] .rb-resume-section-title {
+    color: #0f766e;
+    border-bottom: none;
+    border-left: 4px solid #0d9488;
+    padding-left: 8px;
+    letter-spacing: 1.5px;
+}
+
+[data-template="ats-devops"] .rb-resume-entry-title {
+    color: #0f766e;
+}
+
+[data-template="ats-devops"] .rb-resume-skill {
+    background: #f0fdfa;
+    border-color: #5eead4;
+    color: #0f766e;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 8pt;
+}
+
+/* ==========================================
+   TEMPLATE 4: PRODUCT MANAGER (ats-product)
+   Warm slate, strong summary, business-clean
+   ========================================== */
+[data-template="ats-product"] .rb-resume-header {
+    border-bottom: 1px solid #cbd5e1;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-product"] .rb-resume-name {
+    color: #0f172a;
+    font-size: 20pt;
+}
+
+[data-template="ats-product"] .rb-resume-title {
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 9pt;
+    letter-spacing: 1.5px;
+}
+
+[data-template="ats-product"] .rb-resume-section-title {
+    color: #334155;
+    border-bottom: 2px solid #334155;
+    font-size: 9pt;
+    letter-spacing: 2px;
+}
+
+[data-template="ats-product"] .rb-resume-entry-title {
+    color: #0f172a;
+}
+
+[data-template="ats-product"] .rb-resume-entry-subtitle {
+    color: #475569;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-product"] .rb-resume-skill {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 9pt;
+    color: #334155;
+}
+
+[data-template="ats-product"] .rb-resume-skills-list {
+    gap: 0;
+}
+
+[data-template="ats-product"] .rb-resume-skill::after {
+    content: " · ";
+    color: #94a3b8;
+}
+
+[data-template="ats-product"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+/* ==========================================
+   TEMPLATE 5: UI/UX DESIGNER (ats-uiux)
+   Indigo accent, creative header, portfolio-forward
+   ========================================== */
+[data-template="ats-uiux"] .rb-resume-header {
+    border-bottom: none;
+    text-align: center;
+    padding-bottom: 0;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+[data-template="ats-uiux"] .rb-resume-header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #818cf8);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+[data-template="ats-uiux"] .rb-resume-name {
+    color: #312e81;
+    font-size: 24pt;
+    letter-spacing: -0.5px;
+}
+
+[data-template="ats-uiux"] .rb-resume-title {
+    color: #4f46e5;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+[data-template="ats-uiux"] .rb-resume-section-title {
+    color: #4f46e5;
+    border-bottom: none;
+    padding-bottom: 4px;
+    position: relative;
+}
+
+[data-template="ats-uiux"] .rb-resume-section-title::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: linear-gradient(90deg, #4f46e5, transparent);
+    margin-top: 3px;
+    border-radius: 1px;
+}
+
+[data-template="ats-uiux"] .rb-resume-entry-title {
+    color: #312e81;
+}
+
+[data-template="ats-uiux"] .rb-resume-skill {
+    background: #eef2ff;
+    border-color: #a5b4fc;
+    color: #4338ca;
+    border-radius: 20px;
+    font-weight: 500;
+    padding: 2px 10px;
+}
+
+/* ==========================================
+   TEMPLATE 6: BUSINESS / FINANCE (ats-business)
+   Navy classic, conservative, formal
+   ========================================== */
+[data-template="ats-business"] .rb-resume-header {
+    border-bottom: 3px double #1e3a5f;
+    text-align: center;
+    padding-bottom: 14px;
+}
+
+[data-template="ats-business"] .rb-resume-name {
+    color: #1e3a5f;
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+    letter-spacing: 0;
+}
+
+[data-template="ats-business"] .rb-resume-title {
+    color: #2d5282;
+    font-weight: 400;
+    font-style: italic;
+}
+
+[data-template="ats-business"] .rb-resume-section-title {
+    color: #1e3a5f;
+    border-bottom: 1px solid #1e3a5f;
+    font-family: 'Merriweather', Georgia, serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: none;
+    font-size: 10.5pt;
+}
+
+[data-template="ats-business"] .rb-resume-entry-title {
+    color: #1e3a5f;
+    font-family: 'Merriweather', Georgia, serif;
+}
+
+[data-template="ats-business"] .rb-resume-entry-subtitle {
+    font-style: normal;
+    color: #2d5282;
+    font-weight: 600;
+}
+
+[data-template="ats-business"] .rb-resume-skill {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #1e3a5f;
+    font-size: 9.5pt;
+}
+
+[data-template="ats-business"] .rb-resume-skills-list {
+    gap: 0;
+}
+
+[data-template="ats-business"] .rb-resume-skill::after {
+    content: " | ";
+    color: #94a3b8;
+}
+
+[data-template="ats-business"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+/* ==========================================
+   TEMPLATE 7: HEALTHCARE / MEDICAL (ats-healthcare)
+   Green-teal, clinical clean, credential-first
+   ========================================== */
+[data-template="ats-healthcare"] .rb-resume-header {
+    border-bottom: 2px solid #0d9488;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-healthcare"] .rb-resume-name {
+    color: #134e4a;
+}
+
+[data-template="ats-healthcare"] .rb-resume-title {
+    color: #0d9488;
+    font-weight: 600;
+}
+
+[data-template="ats-healthcare"] .rb-resume-section-title {
+    color: #0f766e;
+    border-bottom: none;
+    background: #f0fdfa;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border-left: 4px solid #0d9488;
+}
+
+[data-template="ats-healthcare"] .rb-resume-entry-title {
+    color: #134e4a;
+}
+
+[data-template="ats-healthcare"] .rb-resume-entry-subtitle {
+    color: #0f766e;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-healthcare"] .rb-resume-skill {
+    background: #f0fdfa;
+    border-color: #5eead4;
+    color: #0f766e;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   TEMPLATE 8: ENGINEERING — MECH/CIVIL (ats-engineering)
+   Steel gray, technical, structured
+   ========================================== */
+[data-template="ats-engineering"] .rb-resume-header {
+    border-bottom: none;
+    border-top: 4px solid #374151;
+    border-bottom: 1px solid #9ca3af;
+    text-align: left;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+[data-template="ats-engineering"] .rb-resume-name {
+    color: #111827;
+    font-size: 20pt;
+    letter-spacing: 0.5px;
+}
+
+[data-template="ats-engineering"] .rb-resume-title {
+    color: #374151;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 8.5pt;
+    letter-spacing: 2px;
+}
+
+[data-template="ats-engineering"] .rb-resume-section-title {
+    color: #111827;
+    border-bottom: 2px solid #374151;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 9pt;
+}
+
+[data-template="ats-engineering"] .rb-resume-entry-title {
+    color: #111827;
+}
+
+[data-template="ats-engineering"] .rb-resume-entry-subtitle {
+    color: #374151;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-engineering"] .rb-resume-skill {
+    background: #f9fafb;
+    border-color: #6b7280;
+    color: #374151;
+    border-radius: 2px;
+    font-size: 8pt;
+    font-weight: 500;
+}
+
+/* ==========================================
+   TEMPLATE 9: DIGITAL MARKETING (ats-marketing)
+   Orange-coral accent, campaign-results focused
+   ========================================== */
+[data-template="ats-marketing"] .rb-resume-header {
+    border-bottom: none;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    padding: 16px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    border-left: 5px solid #ea580c;
+    text-align: left;
+}
+
+[data-template="ats-marketing"] .rb-resume-name {
+    color: #9a3412;
+    font-size: 21pt;
+}
+
+[data-template="ats-marketing"] .rb-resume-title {
+    color: #ea580c;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 8.5pt;
+    letter-spacing: 1.5px;
+}
+
+[data-template="ats-marketing"] .rb-resume-contact {
+    color: #7c2d12;
+}
+
+[data-template="ats-marketing"] .rb-resume-section-title {
+    color: #ea580c;
+    border-bottom: 2px solid #fed7aa;
+    padding-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+[data-template="ats-marketing"] .rb-resume-entry-title {
+    color: #9a3412;
+}
+
+[data-template="ats-marketing"] .rb-resume-entry-subtitle {
+    color: #c2410c;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-marketing"] .rb-resume-skill {
+    background: #fff7ed;
+    border-color: #fdba74;
+    color: #c2410c;
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 2px 10px;
+}
+
+/* ==========================================
+   TEMPLATE 10: EDUCATION / TEACHING (ats-education)
+   Warm amber, educator-credential format
+   ========================================== */
+[data-template="ats-education"] .rb-resume-header {
+    border-bottom: 2px solid #d97706;
+    text-align: center;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-education"] .rb-resume-name {
+    color: #78350f;
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+}
+
+[data-template="ats-education"] .rb-resume-title {
+    color: #b45309;
+    font-weight: 500;
+    font-style: italic;
+}
+
+[data-template="ats-education"] .rb-resume-section-title {
+    color: #92400e;
+    border-bottom: none;
+    background: #fffbeb;
+    border-bottom: 2px solid #fcd34d;
+    padding-bottom: 4px;
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 10pt;
+    text-transform: none;
+    letter-spacing: 0.3px;
+}
+
+[data-template="ats-education"] .rb-resume-entry-title {
+    color: #78350f;
+    font-family: 'Merriweather', Georgia, serif;
+}
+
+[data-template="ats-education"] .rb-resume-entry-subtitle {
+    color: #92400e;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-education"] .rb-resume-skill {
+    background: #fffbeb;
+    border-color: #fcd34d;
+    color: #92400e;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   TEMPLATE 11: SALES / ACCOUNT MGMT (ats-sales)
+   Bold red accent, achievement-forward
+   ========================================== */
+[data-template="ats-sales"] .rb-resume-header {
+    border-bottom: 4px solid #dc2626;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-sales"] .rb-resume-name {
+    color: #7f1d1d;
+    font-size: 22pt;
+    font-weight: 800;
+}
+
+[data-template="ats-sales"] .rb-resume-title {
+    color: #dc2626;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 9pt;
+    letter-spacing: 1.5px;
+}
+
+[data-template="ats-sales"] .rb-resume-section-title {
+    color: #dc2626;
+    border-bottom: 2px solid #dc2626;
+    letter-spacing: 1.5px;
+}
+
+[data-template="ats-sales"] .rb-resume-entry-title {
+    color: #7f1d1d;
+    font-weight: 700;
+}
+
+[data-template="ats-sales"] .rb-resume-entry-subtitle {
+    color: #b91c1c;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-sales"] .rb-resume-skill {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #b91c1c;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* ==========================================
+   TEMPLATE 12: HUMAN RESOURCES (ats-hr)
+   Soft purple, people-first, balanced
+   ========================================== */
+[data-template="ats-hr"] .rb-resume-header {
+    border-bottom: 2px solid #9333ea;
+    text-align: left;
+    padding-bottom: 12px;
+}
+
+[data-template="ats-hr"] .rb-resume-name {
+    color: #581c87;
+}
+
+[data-template="ats-hr"] .rb-resume-title {
+    color: #9333ea;
+    font-weight: 500;
+}
+
+[data-template="ats-hr"] .rb-resume-section-title {
+    color: #7e22ce;
+    border-bottom: none;
+    background: #faf5ff;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border-left: 4px solid #9333ea;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 9pt;
+}
+
+[data-template="ats-hr"] .rb-resume-entry-title {
+    color: #581c87;
+}
+
+[data-template="ats-hr"] .rb-resume-entry-subtitle {
+    color: #7e22ce;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-hr"] .rb-resume-skill {
+    background: #faf5ff;
+    border-color: #d8b4fe;
+    color: #7e22ce;
+    border-radius: 12px;
+    font-weight: 500;
+    padding: 2px 10px;
+}
+
+/* ==========================================
+   TEMPLATE 13: LEGAL / COMPLIANCE (ats-legal)
+   Deep charcoal, formal, bar-admission style
+   ========================================== */
+[data-template="ats-legal"] .rb-resume-header {
+    border-bottom: 1px solid #374151;
+    border-top: 3px solid #111827;
+    text-align: center;
+    padding: 12px 0;
+    margin-bottom: 18px;
+}
+
+[data-template="ats-legal"] .rb-resume-name {
+    color: #111827;
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 20pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+[data-template="ats-legal"] .rb-resume-title {
+    color: #374151;
+    font-weight: 400;
+    font-style: italic;
+    font-family: 'Merriweather', Georgia, serif;
+}
+
+[data-template="ats-legal"] .rb-resume-section-title {
+    color: #111827;
+    border-bottom: 1px solid #374151;
+    font-family: 'Merriweather', Georgia, serif;
+    font-weight: 700;
+    text-transform: none;
+    font-size: 10.5pt;
+    letter-spacing: 0.3px;
+}
+
+[data-template="ats-legal"] .rb-resume-entry-title {
+    color: #111827;
+    font-family: 'Merriweather', Georgia, serif;
+}
+
+[data-template="ats-legal"] .rb-resume-entry-subtitle {
+    color: #374151;
+    font-style: normal;
+    font-weight: 600;
+}
+
+[data-template="ats-legal"] .rb-resume-skill {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #374151;
+    font-size: 9.5pt;
+}
+
+[data-template="ats-legal"] .rb-resume-skills-list {
+    gap: 0;
+}
+
+[data-template="ats-legal"] .rb-resume-skill::after {
+    content: " · ";
+    color: #9ca3af;
+}
+
+[data-template="ats-legal"] .rb-resume-skill:last-child::after {
+    content: "";
+}
+
+/* ── Skill input card (rb- prefixed) ── */
+.rb-skill-input-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+}
+
+.rb-skill-input {
+    flex: 1;
+}
+
+.rb-skill-input-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ── Skill tag (rb- prefixed, in the form panel) ── */
+.rb-skill-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.625rem;
+    background: var(--primary-light);
+    border: 1px solid var(--primary);
+    border-radius: 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--primary-dark);
+}
+
+.rb-skill-tag button {
+    background: none;
+    border: none;
+    padding: 1px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+}
+
+.rb-skill-tag button:hover {
+    opacity: 1;
+}
+
+/* Responsive: keep resume readable at small zoom */
+@media (max-width: 480px) {
+    .rb-resume-name {
+        font-size: 16pt;
+    }
+
+    .rb-resume-section-title {
+        font-size: 9pt;
+    }
+}
+
+/* fs variable used in app.js inline styles */
+:root {
+    --fs-12-18: clamp(0.75rem, 1.5vw, 1.125rem);
+}
+
+/* ==========================================
+   PRINT / PDF EXPORT
+   Ensures clean A4 output with no blank pages
+   ========================================== */
+@media print {
+
+    /* Hide everything except the resume */
+    body>*:not(#resume-output) {
+        display: none !important;
+    }
+
+    /* Reset resume to full printable area */
+    #resume-output {
+        position: static !important;
+        width: 100% !important;
+        padding: 15mm 12mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        font-size: 10pt !important;
+        line-height: 1.4 !important;
+        min-height: auto !important;
+    }
+
+    /* Avoid page breaks inside entries */
+    .rb-resume-entry,
+    .rb-resume-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Section titles stay with their content */
+    .rb-resume-section-title {
+        page-break-after: avoid;
+        break-after: avoid;
     }
 }
