@@ -311,6 +311,21 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
+    <!-- Clear-all confirmation card (warning modal) -->
+    <div class="rb-confirm-overlay" id="clear-all-confirm-overlay" aria-hidden="true">
+        <div class="rb-confirm-card" role="dialog" aria-labelledby="rb-confirm-title" aria-modal="true">
+            <div class="rb-confirm-icon-wrap">
+                <img src="assets/svg/warning.svg" width="48" height="48" alt="" class="rb-confirm-icon">
+            </div>
+            <h3 class="rb-confirm-title" id="rb-confirm-title">Clear all data?</h3>
+            <p class="rb-confirm-message">This will permanently delete all your resume data. This action cannot be undone.</p>
+            <div class="rb-confirm-actions">
+                <button type="button" class="rb-btn rb-btn-secondary" id="clear-all-cancel">Cancel</button>
+                <button type="button" class="rb-btn rb-btn-danger" id="clear-all-confirm">Clear all</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Autosave Indicator -->
     <div class="autosave-indicator" id="autosave-indicator">
         <img src="assets/svg/check.svg" width="16" height="16" alt="" class="icon">

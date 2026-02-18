@@ -25,6 +25,14 @@
     --header-height: 140px;
     --sidebar-width: 200px;
     --preview-width: 380px;
+    
+    /* Spacing scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
 }
 
 * {
@@ -393,7 +401,7 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
 }
 
 .section-header h2 {
@@ -414,30 +422,52 @@ button {
 }
 
 /* Form Styles */
+.section {
+    margin-bottom: 0;
+}
+
+.section .section-header {
+    margin-bottom: var(--space-5);
+}
+
 .form-card {
     background: var(--white);
     border: 1px solid var(--gray-200);
     border-radius: 0.75rem;
-    padding: 1.5rem;
+    padding: var(--space-6);
+}
+
+.form-card .form-row:first-child {
+    margin-top: 0;
+}
+
+.form-card .form-group:only-child {
+    margin-bottom: 0;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: var(--space-4);
+    margin-top: 0;
+    margin-bottom: var(--space-4);
+}
+
+.form-row:last-child {
+    margin-bottom: 0;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
+    gap: 0;
 }
 
 .form-group label {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--gray-700);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
 }
 
 .required {
@@ -663,7 +693,7 @@ textarea {
     display: none;
 }
 
-/* Toast */
+/* Toast container */
 .toast-container {
     position: fixed;
     top: 1rem;
@@ -672,22 +702,36 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    max-width: calc(100vw - 2rem);
+    pointer-events: none;
 }
 
-.toast {
+.toast-container > * {
+    pointer-events: auto;
+}
+
+/* rb-toast: used by app.js */
+.rb-toast {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: white;
-    border-left: 4px solid;
+    padding: 0.875rem 1rem;
+    padding-right: 2.5rem;
+    background: var(--white);
+    border-left: 4px solid var(--gray-400);
     border-radius: 0.5rem;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    min-width: 300px;
-    animation: slideIn 300ms ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 6px rgba(0, 0, 0, 0.05);
+    min-width: 280px;
+    max-width: 420px;
+    animation: rb-toast-in 0.3s ease;
+    position: relative;
 }
 
-@keyframes slideIn {
+.rb-toast-exit {
+    animation: rb-toast-out 0.3s ease forwards;
+}
+
+@keyframes rb-toast-in {
     from {
         transform: translateX(100%);
         opacity: 0;
@@ -698,12 +742,175 @@ textarea {
     }
 }
 
-.toast.success {
-    border-color: var(--success);
+@keyframes rb-toast-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }
 
-.toast.error {
-    border-color: var(--error);
+.rb-toast-success {
+    border-left-color: var(--success);
+}
+
+.rb-toast-error {
+    border-left-color: var(--error);
+}
+
+.rb-toast-warning {
+    border-left-color: #f59e0b;
+}
+
+.rb-toast-info {
+    border-left-color: var(--primary);
+}
+
+.rb-toast-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+}
+
+.rb-toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.rb-toast-message {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--gray-700);
+    word-wrap: break-word;
+}
+
+.rb-toast-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: background 0.15s, color 0.15s;
+}
+
+.rb-toast-close:hover {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.rb-toast-close:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.rb-toast-close .icon,
+.rb-toast-close img {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Legacy .toast (keep for any other use) */
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border-left: 4px solid var(--gray-400);
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    min-width: 280px;
+    max-width: 420px;
+    animation: rb-toast-in 0.3s ease;
+}
+
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--error); }
+.toast.warning { border-left-color: #f59e0b; }
+.toast.info { border-left-color: var(--primary); }
+
+/* Clear-all confirmation overlay & card */
+.rb-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.rb-confirm-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.rb-confirm-card {
+    background: var(--white);
+    border-radius: 0.75rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.rb-confirm-overlay.is-open .rb-confirm-card {
+    transform: scale(1);
+}
+
+.rb-confirm-icon-wrap {
+    margin-bottom: 1rem;
+}
+
+.rb-confirm-icon {
+    display: block;
+    margin: 0 auto;
+    color: #f59e0b;
+}
+
+.rb-confirm-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: 0 0 0.5rem;
+}
+
+.rb-confirm-message {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+}
+
+.rb-confirm-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.rb-confirm-actions .rb-btn {
+    min-width: 100px;
 }
 
 /* Autosave */
@@ -867,17 +1074,23 @@ textarea {
     /* Forms */
     .form-row {
         grid-template-columns: 1fr;
-        gap: 0.75rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
     }
 
     .form-card {
-        padding: 1rem;
+        padding: var(--space-4);
     }
 
     .section-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.75rem;
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
     }
 
     .btn-add {
@@ -900,16 +1113,39 @@ textarea {
         justify-content: center;
     }
 
+    /* rb-* list items on mobile */
+    .rb-form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .rb-list-item {
+        padding: 1rem;
+    }
+
+    .rb-list-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rb-btn-danger {
+        width: 100%;
+        justify-content: center;
+    }
+
     /* Toast */
     .toast-container {
         top: auto;
         bottom: 1rem;
         left: 1rem;
         right: 1rem;
+        max-width: none;
     }
 
-    .toast {
+    .toast,
+    .rb-toast {
         min-width: auto;
+        max-width: none;
     }
 }
 
@@ -1076,33 +1312,185 @@ textarea {
     flex-shrink: 0;
 }
 
-/* Form Improvements */
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
+/* Form Improvements - checkbox in main form */
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
 }
 
-.form-row:last-child {
+/* ==========================================
+   Resume Builder list items (.rb-*)
+   ========================================== */
+
+.rb-list-item {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.rb-list-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.rb-section-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin: 0;
+}
+
+.rb-list-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* rb-btn: delete (danger), primary, secondary, small */
+.rb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 200ms;
+    white-space: nowrap;
+}
+
+.rb-btn-small {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.rb-btn-danger {
+    background: var(--error);
+    color: var(--white);
+}
+
+.rb-btn-danger:hover {
+    background: #dc2626;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.rb-btn-primary {
+    background: var(--primary);
+    color: var(--gray-900);
+}
+
+.rb-btn-primary:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rb-btn-secondary {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.rb-btn-secondary:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-400);
+}
+
+.rb-btn .rb-icon,
+.rb-btn img.icon {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+}
+
+/* rb-form layout */
+.rb-form {
+    margin-top: 0;
+}
+
+.rb-form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.rb-form-row:last-child {
     margin-bottom: 0;
 }
 
-.form-group {
+.rb-form-group {
     display: flex;
     flex-direction: column;
 }
 
-.form-group label {
+.rb-form-group:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+/* rb-label */
+.rb-label {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--gray-700);
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.5rem;
+    display: block;
 }
 
-.form-group input[type="checkbox"] {
-    width: auto;
-    margin: 0;
+/* label that wraps a checkbox: inline layout */
+.rb-label-inline,
+.rb-label:has(input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.rb-label-inline input[type="checkbox"],
+.rb-label input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0 0.5rem 0 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* rb inputs */
+.rb-input,
+.rb-textarea {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: all 200ms;
+}
+
+.rb-input:focus,
+.rb-textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.rb-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
 }
 
 /* Skills Container when empty */
@@ -1159,6 +1547,11 @@ textarea {
     .form-row {
         grid-template-columns: 1fr;
         gap: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
     }
     
     .item-header {

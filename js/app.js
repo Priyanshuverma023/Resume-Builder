@@ -107,6 +107,23 @@ function attachEventListeners() {
         clearAllBtn.addEventListener('click', handleClearAllData);
     }
 
+    const clearOverlay = document.getElementById('clear-all-confirm-overlay');
+    const clearCancel = document.getElementById('clear-all-cancel');
+    const clearConfirm = document.getElementById('clear-all-confirm');
+    if (clearOverlay) {
+        clearOverlay.addEventListener('click', (e) => {
+            if (e.target === clearOverlay) closeClearAllConfirm();
+        });
+    }
+    if (clearCancel) clearCancel.addEventListener('click', closeClearAllConfirm);
+    if (clearConfirm) clearConfirm.addEventListener('click', performClearAllData);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const overlay = document.getElementById('clear-all-confirm-overlay');
+        if (overlay && overlay.classList.contains('is-open')) closeClearAllConfirm();
+    });
+
     const toggleTipsBtn = document.getElementById('toggle-tips');
     if (toggleTipsBtn) {
         toggleTipsBtn.addEventListener('click', () => {
@@ -179,8 +196,30 @@ function handleTemplateChange(e) {
     renderResume();
 }
 
+function openClearAllConfirm() {
+    const overlay = document.getElementById('clear-all-confirm-overlay');
+    if (!overlay) return;
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    const firstFocus = overlay.querySelector('#clear-all-cancel');
+    if (firstFocus) firstFocus.focus();
+}
+
+function closeClearAllConfirm() {
+    const overlay = document.getElementById('clear-all-confirm-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+}
+
 function handleClearAllData() {
-    if (!confirm('Clear all resume data? This cannot be undone.')) return;
+    openClearAllConfirm();
+}
+
+function performClearAllData() {
+    closeClearAllConfirm();
     state.data = {
         personal: {
             fullName: '',
@@ -415,8 +454,8 @@ function addExperience(data = null) {
                         <input type="text" class="rb-input" data-field="location" value="${escapeHTML(experience.location || '')}" placeholder="San Francisco, CA">
                     </div>
                     <div class="rb-form-group">
-                        <label class="rb-label">
-                            <input type="checkbox" data-field="current" ${experience.current ? 'checked' : ''} style="margin-right: 0.5rem;">
+                        <label class="rb-label rb-label-inline">
+                            <input type="checkbox" data-field="current" ${experience.current ? 'checked' : ''}>
                             Currently working here
                         </label>
                     </div>
@@ -1371,19 +1410,40 @@ function populateForm() {
     updateSummaryCharCount();
 }
 
+let toastDismissTimeout = null;
+
 function showToast(message, type = 'info') {
+    if (typeof message !== 'string' && message != null) message = String(message);
+    const text = (message || '').trim() || 'Notification';
+    const safeType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
+
     if (activeToast) {
-        activeToast.classList.add('rb-toast-exit');
-        setTimeout(() => {
-            if (activeToast && activeToast.parentNode) {
-                activeToast.remove();
-            }
-            activeToast = null;
-            createToast(message, type);
-        }, 300);
+        dismissToast(activeToast);
+        toastDismissTimeout = setTimeout(() => {
+            toastDismissTimeout = null;
+            createToast(text, safeType);
+        }, 320);
     } else {
-        createToast(message, type);
+        createToast(text, safeType);
     }
+}
+
+function dismissToast(toast) {
+    if (!toast || !toast.classList) return;
+    if (toast.dismissTimeout) {
+        clearTimeout(toast.dismissTimeout);
+        toast.dismissTimeout = null;
+    }
+    if (toastDismissTimeout) {
+        clearTimeout(toastDismissTimeout);
+        toastDismissTimeout = null;
+    }
+    if (activeToast === toast) activeToast = null;
+    toast.classList.add('rb-toast-exit');
+    setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+        if (activeToast === toast) activeToast = null;
+    }, 300);
 }
 
 function createToast(message, type) {
@@ -1397,33 +1457,37 @@ function createToast(message, type) {
         info: 'assets/svg/info.svg'
     };
     const iconSrc = iconPaths[type] || iconPaths.info;
-    const safeType = ['success', 'error', 'warning', 'info'].includes(type) ? type : 'info';
 
     const toast = document.createElement('div');
-    toast.className = `rb-toast rb-toast-${safeType}`;
+    toast.className = `rb-toast rb-toast-${type}`;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
     toast.innerHTML = `
         <img src="${iconSrc}" alt="" class="rb-toast-icon">
         <div class="rb-toast-content">
-            <div class="rb-toast-message">${escapeHTML(String(message || ''))}</div>
+            <div class="rb-toast-message">${escapeHTML(message)}</div>
         </div>
+        <button type="button" class="rb-toast-close" aria-label="Dismiss notification">
+            <img src="assets/svg/close.svg" alt="" width="16" height="16" class="icon">
+        </button>
     `;
-    
+
+    const closeBtn = toast.querySelector('.rb-toast-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dismissToast(toast);
+        });
+    }
+
     container.appendChild(toast);
     activeToast = toast;
-    
-    setTimeout(() => {
-        if (activeToast === toast) {
-            toast.classList.add('rb-toast-exit');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.remove();
-                }
-                if (activeToast === toast) {
-                    activeToast = null;
-                }
-            }, 300);
-        }
-    }, TOAST_DURATION);
+
+    const duration = typeof TOAST_DURATION === 'number' && TOAST_DURATION > 0 ? TOAST_DURATION : 3000;
+    toast.dismissTimeout = setTimeout(() => {
+        toast.dismissTimeout = null;
+        dismissToast(toast);
+    }, duration);
 }
 
 function debounce(func, wait) {
